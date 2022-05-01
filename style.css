@@ -1,0 +1,125 @@
+:root {
+    --background: #313030;
+    --background-layer2: #292828;
+    --background-layer3: #202020;
+    --borders: #161212;
+    --accent: #2e2583;
+    --textwhite: #e7f6ff;
+    --texthidden: #e7f6ff00;
+    --textdisabled: #6a7780;
+    --textred: #ff8b8b;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    
+}
+#left-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    background-color: var(--background);
+    overflow-x: hidden;
+}
+#right-col {
+    display: flex;
+    transition: flex 0.6s;
+    flex: 0.2 0 15rem;
+    background-color: var(--background-layer2);
+    border-left: 4px solid var(--borders);
+}
+#right-col.closed {
+    flex: 0 0 3rem;
+}
+#game {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    position: relative;
+    flex: 3 0 0;
+}
+#bottom-pane {
+    display: flex;
+    flex-direction: row-reverse;
+    transition: flex 0.6s;
+    flex: 2 0 0;
+    border-top: 4px solid var(--borders);
+    background-color: var(--background-layer3);
+    padding: 0.5rem 0.25rem;
+}
+#bottom-pane.closed {
+    flex: 0 0 0.5rem;
+}
+#bottom-pane.closed * {
+    flex: 0 0 0;
+    margin-bottom: -0.5rem;
+}
+#regex-entry, #sub-entry {
+    transition: flex 0.6s, margin 0.6s;
+    flex: 1 0 0;
+    margin: 0.5rem;
+    background-color: var(--background-layer2);
+}
+#regex-entry.closed, #sub-entry.closed {
+    flex: 0 0 0;
+    margin-left: -0.5rem;
+}
+.col-twisty {
+    display: flex;
+    border: none;
+    justify-content: space-between;
+    padding: 0.2rem;
+    width: 2rem;
+    height: 2rem;
+    margin: 0.5rem;
+    background-color: var(--background);
+}
+.closed .col-twisty {
+    flex-direction: column;
+}
+.col-twisty > div {
+    background-color: var(--textwhite);
+    flex: 0 0 0.25rem;
+}
+p {
+    color: var(--textwhite);
+    font-size: medium;
+    margin: 0.05em;
+}
+p.target {
+    font-size: large;
+}
+p * {
+    transition: color 0.45s ease-in;
+}
+span.ht {
+    color: var(--textred);
+    background-color: #f003;
+}
+span.at:not(.ht) {
+    text-decoration-color: #ff0000;
+    color: #ff0000;
+    text-decoration-line: line-through overline underline;
+}
+span.at {
+    text-decoration: underline overline var(--textwhite);
+}
+p.scroller {
+    animation: 20s linear 0s infinite normal scroller;
+    position: absolute;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+p.died > span.ht {
+    color: var(--textdisabled);
+}
+p.intro {
+    transition: color 0.5s;
+    font-size: x-large;
+}
+@-webkit-keyframes scroller { from { margin-left: -5rem; } to { margin-left: 105%; }  }
+@keyframes scroller { from { margin-left: -5rem; } to { margin-left: 105%; }  }
