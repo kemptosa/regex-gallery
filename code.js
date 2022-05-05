@@ -2,7 +2,6 @@ let rightCol = document.getElementById('right-col')
 let leftCol = document.getElementById('left-col')
 let bottomPane = document.getElementById('bottom-pane')
 let game = document.getElementById('game')
-let gameflex = document.getElementById('gameflex')
 let regexEntry = document.getElementById('regex-entry')
 let subEntry = document.getElementById('sub-entry')
 
@@ -78,7 +77,7 @@ if (!gameData.introPlayed) {
     let currentText = ''
     let introContainer = document.createElement('p')
     introContainer.className = 'intro'
-    introContainer.innerText = '//i'
+    introContainer.innerText = '//'
     game.append(introContainer)
     let introLoop;
     introLoop = setInterval(()=>{
@@ -99,7 +98,56 @@ if (!gameData.introPlayed) {
 } else {
     start()
 }
-function start() {
+let levelData = {
+    intro:{name:'Intro',
+    statictargets:['regex'],
+    dynamictargets:[],
+    matchregex:'regex',
+    leveltext:'Welcome to Regex Gallery! Regex is an extremely powerful tool for searching and replacing within text. To start off, try matching the word "regex" as seen on the left. To start, enter a regular expression into the space in the bottom left between the <span class="code">//</span>.<br/><br/>The simplest way to match something with regex is to simply type it out. Most characters in regex have no explicit meaning on their own and can be used with no special considerations.',
+    addref:[],
+    next:'cats_and_bars',
+    prev:null
+    },
+    cats_and_bars:{name:'Cats and Bars',
+    statictargets:['cat', 'bar'],
+    dynamictargets:['bat', 'rat',
+                    'bar', 'par', 'jar',
+                    'bot', 'lot', 'jot', 'rot', 'cot'],
+    matchregex:'.a.',
+    leveltext:'Here you will need the first special token, <span class="code">.</span><br/><br/>The <span class="code">.</span> token is a "wildcard"; it will match any character or symbol in a given position.<br/><br/>To complete this level, you should match any 3 letter word with an "a" in the center.',
+    addref:[['.', 'wildcard']],
+    next:'cats_and_caaaats',
+    prev:'intro'
+    }
+}
+function start(level) {
+    let startLevel = 'intro'
+    if (level === undefined) {
+        while (levelData[startLevel].next !== null) {
+            let next = levelData[startLevel].next
+            if (gameData.completed.includes(startLevel)) {
+                startLevel = next
+            } else {
+                break
+            }
+        }
+    } else {
+        startLevel = level
+    }
+    rightCol.querySelector('.leveltext').innerHTML = levelData[startLevel].leveltext
     rightCol.classList.remove('closed')
     bottomPane.classList.remove('closed')
+    for ([index, target] of levelData[startLevel].dynamictargets.sort(()=>Math.random()-0.5).entries()) {
+        newTarget = document.createElement('p')
+        newTarget.className = 'target scroller'
+        newTarget.style = `top: ${index}em; animation-delay: -${Math.random() * 30}s;`
+        newTarget.innerText = target
+        game.append(newTarget)
+    }
+    for (target of levelData[startLevel].statictargets) {
+        newTarget = document.createElement('p')
+        newTarget.className = 'target'
+        newTarget.innerText = target
+        game.append(newTarget)
+    }
 }

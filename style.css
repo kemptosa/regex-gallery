@@ -4,7 +4,7 @@
     --background-layer3: #202020;
     --borders: #161212;
     --accent: #2e2583;
-    --textwhite: #e7f6ff;
+    --text: #e7f6ff;
     --texthidden: #e7f6ff00;
     --textdisabled: #6a7780;
     --textred: #ff8b8b;
@@ -82,13 +82,16 @@ body {
     flex-direction: column;
 }
 .col-twisty > div {
-    background-color: var(--textwhite);
+    background-color: var(--text);
     flex: 0 0 0.25rem;
 }
 p {
-    color: var(--textwhite);
+    color: var(--text);
     font-size: medium;
     margin: 0.05em;
+}
+p.leveltext {
+    padding: 1rem;
 }
 p.target {
     font-size: large;
@@ -100,19 +103,27 @@ span.ht {
     color: var(--textred);
     background-color: #f003;
 }
+span.code {
+    padding: 0.2em;
+    background-color: var(--borders);
+}
 span.at:not(.ht) {
     text-decoration-color: #ff0000;
     color: #ff0000;
     text-decoration-line: line-through overline underline;
 }
 span.at {
-    text-decoration: underline overline var(--textwhite);
+    text-decoration: underline overline var(--text);
 }
 p.scroller {
-    animation: 20s linear 0s infinite normal scroller;
+    animation: 30s linear 0s infinite normal scroller;
     position: absolute;
     white-space: nowrap;
     overflow-x: hidden;
+}
+p.target:not(.scroller) {
+    background-color: var(--background);
+    z-index: 1;
 }
 p.died > span.ht {
     color: var(--textdisabled);
