@@ -115,7 +115,9 @@ span.at:not(.ht) {
     text-decoration-line: line-through overline underline;
 }
 span.at {
-    text-decoration: underline overline var(--text);
+    /* text-decoration: underline overline var(--text); */
+    outline: 1px solid var(--text);
+    outline-offset: -1px;
 }
 p.scroller {
     animation: 30s linear 0s infinite normal scroller;
