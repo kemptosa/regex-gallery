@@ -5,6 +5,7 @@
     --borders: #161212;
     --accent: #2e2583;
     --text: #e7f6ff;
+    --highlight: #8b8b8b;
     --texthidden: #e7f6ff00;
     --textdisabled: #6a7780;
     --textred: #ff8b8b;
@@ -36,6 +37,7 @@ body {
     flex: 0 0 3rem;
 }
 #game {
+    transition: opacity 1s ease-in;
     display: grid;
     justify-content: center;
     align-content: center;
@@ -68,6 +70,9 @@ body {
     flex: 0 0 0;
     margin-left: -0.5rem;
 }
+.fadeout {
+    opacity: 0;
+}
 .col-twisty {
     display: flex;
     border: none;
@@ -95,9 +100,6 @@ p.leveltext {
 }
 p.target {
     font-size: large;
-}
-p * {
-    transition: color 0.45s ease-in;
 }
 span.ht {
     color: var(--textred);
@@ -132,5 +134,43 @@ p.intro {
     transition: color 0.5s;
     font-size: x-large;
 }
-@-webkit-keyframes scroller { from { margin-left: -5rem; } to { margin-left: 105%; }  }
-@keyframes scroller { from { margin-left: -5rem; } to { margin-left: 105%; }  }
+.regex-input, .flag-input {
+    font-size: medium;
+    margin-left: 5px;
+    margin-right: 5px;
+    min-width: 2em;
+    max-width: fit-content;
+    display: inline-block;
+    background-color: var(--borders);
+    color: var(--text);
+    border: none;
+    outline: none;
+    cursor: text;
+}
+.regex-input:empty:before, .flag-input:empty:before {
+    content: "\200b";
+}
+.regex-input br, .flag-input br {
+    display: none;
+}
+.regex-input.highlight:empty, .flag-input.highlight:empty {
+    animation: 2s linear 0s infinite normal highlights;
+}
+.regex-entry {
+    font-size: larger;
+    align-items: center;
+}
+@-webkit-keyframes highlights {
+    50% { background-color: var(--highlight) }
+}
+@keyframes highlights {
+    50% { background-color: var(--highlight) }
+}
+@-webkit-keyframes scroller {
+    from { margin-left: -5rem; }
+    to { margin-left: 105%; }
+}
+@keyframes scroller {
+    from { margin-left: -5rem; }
+    to { margin-left: 105%; }
+}
