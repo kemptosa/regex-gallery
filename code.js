@@ -124,7 +124,20 @@ let levelData = {
     hideflags: true,
     leveltext:'Here you will need the first special token, <span class="code">.</span><br/><br/>The <span class="code">.</span> token is a "wildcard"; it will match any character or symbol in a given position.<br/><br/>To complete this level, you should match any 3 letter word with an "a" in the center.',
     addref:[['.', 'wildcard']],
-    next:'cats_and_caaaats',
+    next:'end',
+    prev:'intro'
+    },
+    end:{name:'The End',
+    statictargets:['THE END', '(for now)'],
+    dynamictargets:[],
+    matchregex:'the end',
+    matchregexflags:'g',
+    checkgroups: false,
+    entries: 0,
+    hideflags: true,
+    leveltext:'THE END<br/>(for now)',
+    addref:[],
+    next:'end',
     prev:'intro'
     }
 }
