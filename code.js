@@ -204,6 +204,7 @@ function start(level) {
     game.innerHTML = ''
     regexEntry.innerHTML = ''
     subEntry.innerHTML = ''
+    curTargets = []
     for (const [index, target] of curLevel.dynamictargets.sort(()=>Math.random()-0.5).entries()) {
         newTarget = document.createElement('p')
         newTarget.className = 'target scroller'
@@ -261,8 +262,9 @@ function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
     let regex = new RegExp(regexString, regexFlags)
     do {
         indices.push(regex.exec(matchString))
-    } while (regex.lastIndex !== 0)
-    indices.pop()
+    } while (regex.lastIndex !== 0 && regex.lastIndex !== matchString.length)
+    //indices.pop()
+    indices = indices.filter(i=>i!==null)
     if (!includeGroups) {
         return indices.map(i=>[[...i.indices[0]]])
     } else {
