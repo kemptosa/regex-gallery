@@ -18,18 +18,15 @@ let overlapSpan = function(text, spans) {
     let ignore = true
     for (let i = 0; i < text.length; i += 1) {
         let changed = false
+        classes.clear()
         for (const span of spans) {
             let cl = span[0]
             let start = span[1]
             let end = span[2]
             if (start <= i && i < end) {
-                if (!classes.has(cl)) {
-                    classes.add(cl)
-                    changed = true
-                }
-            } else {
-                changed ||= classes.delete(cl)
+                classes.add(cl)
             }
+            changed ||= (start === i) || (end === i)
         }
         if (changed) {
             if (!ignore) {
@@ -284,3 +281,8 @@ function handleEntry(e) {
     }
 }
 document.addEventListener('keyup', handleEntry)
+if (document.location.hostname === '127.0.0.1') {
+    let tests = document.createElement('script')
+    tests.setAttribute('src', 'tests.js')
+    document.body.append(tests)
+}
