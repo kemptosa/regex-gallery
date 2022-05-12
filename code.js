@@ -137,8 +137,8 @@ let levelData = {
     hideflags: true,
     leveltext:'THE END<br/>(for now)',
     addref:[],
-    next:'end',
-    prev:'intro'
+    next:null,
+    prev:null
     }
 }
 let curLevelId = 'intro'
@@ -260,9 +260,13 @@ function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
     }
     let indices = []
     let regex = new RegExp(regexString, regexFlags)
+    let lastLastIndex = null
     do {
+        lastLastIndex = regex.lastIndex
         indices.push(regex.exec(matchString))
-    } while (regex.lastIndex !== 0 && regex.lastIndex !== matchString.length)
+    } while (regex.lastIndex !== 0
+        && regex.lastIndex !== matchString.length
+        && regex.lastIndex !== lastLastIndex)
     //indices.pop()
     indices = indices.filter(i=>i!==null)
     if (!includeGroups) {
