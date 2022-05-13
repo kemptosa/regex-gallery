@@ -5,6 +5,8 @@ let game = document.getElementById('game')
 let regexEntry = document.getElementById('regex-entry')
 let subEntry = document.getElementById('sub-entry')
 
+let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
+
 Set.prototype.toggle = function(token) {
     if (!this.delete(token)) {
         this.add(token)
@@ -60,10 +62,13 @@ let gameData =  {
     introPlayed: false,
     currentLevel: 0,
 }
+defaultData = gameData
 void function loadData() {
     let loadedData = localStorage.getItem('gamedata')
     if (loadedData !== null) {
         gameData = JSON.parse(loadedData)
+    } else {
+        gameData = JSON.parse(JSON.stringify(gameData))
     }
 }()
 let saveData = function() {
@@ -121,8 +126,47 @@ let levelData = {
     hideflags: true,
     leveltext:'Here you will need the first special token, <span class="code">.</span><br/><br/>The <span class="code">.</span> token is a "wildcard"; it will match any character or symbol in a given position.<br/><br/>To complete this level, you should match any 3 letter word with an "a" in the center.',
     addref:[['.', 'wildcard']],
-    next:'end',
+    next:'more_specific_non',
     prev:'intro'
+    },
+    more_specific_non:{name:'More Specific Non-specificity',
+    statictargets:['dab', 'cat', 'cob'],
+    dynamictargets:['cab', 'dob', 'cot', 'jot', 'cam', 'dot', 'datum', 'jacob'],
+    matchregex:'[dc][oa][tb]',
+    matchregexflags:'g',
+    checkgroups: false,
+    entries: 1,
+    hideflags: true,
+    leveltext:'Perhaps <span class="code">.</span> is too vague for you. Maybe you only want to match a certain set of characters in a certain position, rather than any character in that position.<br/><br/>Good news! With regex, there\'s always a way! <span class="code">[ ... ]</span> provides a way to match a set of characters, also known as a character class.<br/><br/>For example, the regex <span class="code">m[aeiou]t</span> would match any 3 characters that starts with m, ends with t, and has a vowel in the middle. (met, or mat, or mot, etc...)<br/><br/>For this level, you must match a set of 3 characters, each of which can be one of two options. Try working out the two possible characters you need in each position from the targets provided on the left.',
+    addref:[['[...]', 'set of characters']],
+    next:'end',
+    prev:'cats_and_bars'
+    },
+    word_esque:{name:'Word-esque',
+    statictargets:['%##@'],
+    dynamictargets:[],
+    matchregex:'.a.',
+    matchregexflags:'g',
+    checkgroups: false,
+    entries: 1,
+    hideflags: true,
+    leveltext:'',
+    addref:[['\\w', 'equivalent to [a-zA-Z0-9_]']],
+    next:null,
+    prev:null
+    },
+    an_unknown_quantity_i:{name:'An Unknown Quantity, Part I',
+    statictargets:['ct scan', 'cat scan', 'emi scan'],
+    dynamictargets:['caaaat', 'caaaaaaaaaaaaaaaaaaaat'],
+    matchregex:'ca*t',
+    matchregexflags:'g',
+    checkgroups:false,
+    entries:1,
+    hideflags:true,
+    leveltext:'',
+    addref:[['*', '0 or more']],
+    next:null,
+    prev:null
     },
     end:{name:'The End',
     statictargets:['THE END', '(for now)'],
@@ -142,6 +186,14 @@ let curLevelId = 'intro'
 let curLevel = null
 let curEntries = []
 let curTargets = []
+let resetData = function() {
+    gameData = JSON.parse(JSON.stringify(defaultData))
+    curLevelId = 'intro'
+    curLevel = null
+    curEntries = []
+    curTargets = []
+    start()
+}
 function spanifyAndCheck() {
     let isAllComplete = true
     for (const target of curTargets) {
@@ -164,6 +216,9 @@ function spanifyAndCheck() {
     }
     if (isAllComplete) {
         gameData.completed.push(curLevelId)
+        if (!isTest) {
+            saveData()
+        }
         game.classList.add('fadeout')
         setTimeout(()=>{
             game.classList.remove('fadeout')
@@ -281,7 +336,7 @@ function handleEntry(e) {
     }
 }
 document.addEventListener('keyup', handleEntry)
-if (document.location.hostname === '127.0.0.1') {
+if (isTest) {
     let tests = document.createElement('script')
     tests.setAttribute('src', 'tests.js')
     document.body.append(tests)
