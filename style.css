@@ -108,6 +108,7 @@ span.ht {
 span.code {
     padding: 0.2em;
     background-color: var(--borders);
+    word-break: keep-all;
 }
 span.at:not(.ht) {
     text-decoration-color: #ff0000;
