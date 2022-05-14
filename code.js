@@ -126,10 +126,10 @@ let levelData = {
     hideflags: true,
     leveltext:'Here you will need the first special token, <span class="code">.</span><br/><br/>The <span class="code">.</span> token is a "wildcard"; it will match any character or symbol in a given position.<br/><br/>To complete this level, you should match any 3 letter word with an "a" in the center.',
     addref:[['.', 'wildcard']],
-    next:'more_specific_non_',
+    next:'more_specific_non',
     prev:'intro'
     },
-    more_specific_non_:{name:'More Specific Non-specificity',
+    more_specific_non:{name:'More Specific Non-specificity',
     statictargets:['dab', 'cat', 'cob'],
     dynamictargets:['cab', 'dob', 'cot', 'jot', 'cam', 'dot', 'datum', 'jacob','fab','tob','bob'],
     matchregex:'[dc][oa][tb]',
@@ -150,11 +150,11 @@ let levelData = {
     checkgroups: false,
     entries: 1,
     hideflags: true,
-    leveltext:'Character classes are extremely useful, but can get lengthy in certain cases. Regex provides some shortcuts for commonly needed character classes.<br/><br/><span class="code">\\w</span> is one such shortcut. It corresponds to a a character class which matches any letter (uppercase or lower), any number, and underscores. It\'s formal name is the \'word character\', which may be somewhat offputting due to it\'s aforementioned inclusion of numbers and underscores.<br/><br/>Side note: for most of these \'shortcuts\', if you capitalize the letter, i.e. <span class="code">\\W</span>, it has the effect of inverting the selection. (in this case it would be any character that <em>isn\'t</em> a letter, number or underscore)',
+    leveltext:'Character classes are extremely useful, but can get lengthy in certain cases. Regex provides some shortcuts for commonly needed character classes.<br/><br/><span class="code">\\w</span> is one such shortcut. It corresponds to a character class which matches any letter (uppercase or lower), any number, and underscores. It\'s formal name is the \'word character\', which may be somewhat offputting due to it\'s aforementioned inclusion of numbers and underscores.<br/><br/>Side note: for most of these \'shortcuts\', if you capitalize the letter, i.e. <span class="code">\\W</span>, it has the effect of inverting the selection. (in this case it would be any character that <em>isn\'t</em> a letter, number or underscore)',
     addref:[['\\w', 'equivalent to [a-zA-Z0-9_]'],
             ['\\W', 'equivalent to [^a-zA-Z0-9_]']],
     next:'end',
-    prev:'more_specific_non_'
+    prev:'more_specific_non'
     },
     an_unknown_quantity_i:{name:'An Unknown Quantity, Part I',
     statictargets:['ct scan', 'cat scan', 'emi scan'],
@@ -166,6 +166,19 @@ let levelData = {
     hideflags:true,
     leveltext:'',
     addref:[['*', '0 or more']],
+    next:null,
+    prev:null
+    },
+    beyond_the_boundary:{name:'Beyond the Boundary',
+    statictargets:['THE END', '(for now)'],
+    dynamictargets:[],
+    matchregex:'the end',
+    matchregexflags:'g',
+    checkgroups: false,
+    entries: 0,
+    hideflags: true,
+    leveltext:'THE END<br/>(for now)',
+    addref:[],
     next:null,
     prev:null
     },
@@ -187,12 +200,13 @@ let curLevelId = 'intro'
 let curLevel = null
 let curEntries = []
 let curTargets = []
-let resetData = function() {
+let resetData = function(save) {
     gameData = JSON.parse(JSON.stringify(defaultData))
     curLevelId = 'intro'
     curLevel = null
     curEntries = []
     curTargets = []
+    if (save) {saveData()}
     start()
 }
 function spanifyAndCheck() {
@@ -276,26 +290,29 @@ function start(level) {
     curEntries = []
     spanifyAndCheck()
     for (let i = 0; i < curLevel.entries; i += 1) {
-        let newRegexInput = document.createElement('span')
-        let newFlagInput = document.createElement('span')
-        let newP = document.createElement('p')
-        newRegexInput.className = 'regex-input'
-        newRegexInput.contentEditable = true
-        newFlagInput.className = 'flag-input'
-        newFlagInput.contentEditable = true
-        newP.className = 'regex-entry'
-        newP.append('/', newRegexInput, '/')
-        if (curLevelId === 'intro') {
-            newRegexInput.classList.add('highlight')
-        }
-        if (!curLevel.hideflags) {
-            newP.append(newFlagInput)
-        }
-        newRegexInput.addEventListener('focusout', fixText)
-        newFlagInput.addEventListener('focusout', fixText)
-        curEntries.push([newRegexInput, newFlagInput])
-        regexEntry.append(newP)
+        addRegexEntry(regexEntry)
     }
+}
+function addRegexEntry(regexEntry) {
+    let newRegexInput = document.createElement('span')
+    let newFlagInput = document.createElement('span')
+    let newP = document.createElement('p')
+    newRegexInput.className = 'regex-input'
+    newRegexInput.contentEditable = true
+    newFlagInput.className = 'flag-input'
+    newFlagInput.contentEditable = true
+    newP.className = 'regex-entry'
+    newP.append('/', newRegexInput, '/')
+    if (curLevelId === 'intro') {
+        newRegexInput.classList.add('highlight')
+    }
+    if (!curLevel.hideflags) {
+        newP.append(newFlagInput)
+    }
+    newRegexInput.addEventListener('focusout', fixText)
+    newFlagInput.addEventListener('focusout', fixText)
+    curEntries.push([newRegexInput, newFlagInput])
+    regexEntry.append(newP)
 }
 function fixText() {
     this.innerText = this.innerText
