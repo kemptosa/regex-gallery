@@ -70,7 +70,7 @@ const levelData = {
     beyond_the_boundary:{name:'Beyond the Boundary',
     statictargets:['catfish', 'bobcat', 'catatonic'],
     dynamictargets:['certificate', 'catalonia', 'located', 'cathode'],
-    matchregex:'\bcat',
+    matchregex:'\\bcat',
     matchregexflags:'g',
     checkgroups: false,
     entries: 1,
