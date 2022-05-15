@@ -1,4 +1,4 @@
-:root {
+body {
     --background: #313030;
     --background-layer2: #292828;
     --background-layer3: #202020;
@@ -10,6 +10,18 @@
     --textdisabled: #6a7780;
     --textred: #ff8b8b;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body.light {
+    --background: #ffffff;
+    --background-layer2: #dddddd;
+    --background-layer3: #ffffff;
+    --borders: #161212;
+    --accent: #544ab1;
+    --text: #202020;
+    --highlight: #ffffff;
+    --texthidden: #cccccc00;
+    --textdisabled: #4c565e;
+    --textred: #ff8b8b;
 }
 body {
     height: 100vh;
@@ -42,6 +54,7 @@ body {
     justify-content: center;
     align-content: center;
     position: relative;
+    overflow: hidden;
     flex: 3 0 0;
 }
 #bottom-pane {
@@ -69,6 +82,18 @@ body {
 #regex-entry.closed, #sub-entry.closed {
     flex: 0 0 0;
     margin-left: -0.5rem;
+}
+#menu {
+    position: absolute;
+    z-index: 2;
+    background-color: var(--background);
+    transition: opacity 0.3s;
+    opacity: 0;
+    height: 100%;
+    width: 100%;
+}
+#menu.open {
+    opacity: 1;
 }
 .fadeout {
     opacity: 0;

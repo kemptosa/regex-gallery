@@ -4,6 +4,7 @@ let bottomPane = document.getElementById('bottom-pane')
 let game = document.getElementById('game')
 let regexEntry = document.getElementById('regex-entry')
 let subEntry = document.getElementById('sub-entry')
+let menu = document.getElementById('menu')
 
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
 
@@ -14,7 +15,7 @@ Set.prototype.toggle = function(token) {
     }
     return false
 }
-let overlapSpan = function(text, spans) {
+function overlapSpan(text, spans) {
     let result = ''
     let classes = new Set()
     let ignore = true
@@ -53,7 +54,7 @@ let overlapSpan = function(text, spans) {
 
 // document.getElementById('right-col-toggle').onclick = function() {
 //     rightCol.classList.toggle('closed')
-//     //bottomPane.classList.toggle('closed')
+//     bottomPane.classList.toggle('closed')
 // }
 
 let gameData =  {
@@ -89,7 +90,7 @@ if (!gameData.introPlayed) {
         } else {
             clearInterval(introLoop)
             setTimeout(()=>{
-                introContainer.style = "color: var(--texthidden);"
+                introContainer.style.color = "var(--texthidden);"
                 setTimeout(()=>{
                     introContainer.remove()
                     start()
@@ -100,107 +101,11 @@ if (!gameData.introPlayed) {
 } else {
     start()
 }
-let levelData = {
-    intro:{name:'Intro',
-    statictargets:['regex'],
-    dynamictargets:[],
-    matchregex:'regex',
-    matchregexflags:'g',
-    checkgroups: false,
-    entries: 1,
-    hideflags: true,
-    leveltext:'Welcome to Regex Gallery! Regex is an extremely powerful tool for searching and replacing within text. To start off, try matching the word "regex" as seen on the left. To start, enter a regular expression into the space in the bottom left between the <span class="code">//</span>.<br/><br/>The simplest way to match something with regex is to simply type it out. Most characters in regex have no explicit meaning on their own and can be used with no special considerations.',
-    addref:[],
-    next:'cats_and_bars',
-    prev:null
-    },
-    cats_and_bars:{name:'Cats and Bars',
-    statictargets:['cat', 'bar'],
-    dynamictargets:['bat', 'rat',
-                    'bar', 'par', 'jar',
-                    'bot', 'lot', 'jot', 'rot', 'cot'],
-    matchregex:'.a.',
-    matchregexflags:'g',
-    checkgroups: false,
-    entries: 1,
-    hideflags: true,
-    leveltext:'Here you will need the first special token, <span class="code">.</span><br/><br/>The <span class="code">.</span> token is a "wildcard"; it will match any character or symbol in a given position.<br/><br/>To complete this level, you should match any 3 letter word with an "a" in the center.',
-    addref:[['.', 'wildcard']],
-    next:'more_specific_non',
-    prev:'intro'
-    },
-    more_specific_non:{name:'More Specific Non-specificity',
-    statictargets:['dab', 'cat', 'cob'],
-    dynamictargets:['cab', 'dob', 'cot', 'jot', 'cam', 'dot', 'datum', 'jacob','fab','tob','bob'],
-    matchregex:'[dc][oa][tb]',
-    matchregexflags:'g',
-    checkgroups: false,
-    entries: 1,
-    hideflags: true,
-    leveltext:'Perhaps <span class="code">.</span> is too vague for you. Maybe you only want to match a certain set of characters in a certain position, rather than any character in that position.<br/><br/>Good news! With regex, there\'s always a way! <span class="code">[ ... ]</span> provides a way to match a set of characters, also known as a character class.<br/><br/>For example, the regex <span class="code">m[aeiou]t</span> would match any 3 characters that starts with m, ends with t, and has a vowel in the middle. (met, or mat, or mot, etc...)<br/><br/>For this level, you must match a set of 3 characters, each of which can be one of two options. Try working out the two possible characters you need in each position from the targets provided on the left.',
-    addref:[['[...]', 'set of characters']],
-    next:'word_esque',
-    prev:'cats_and_bars'
-    },
-    word_esque:{name:'Word-esque',
-    statictargets:['%##@', 'Rita', 'pack', 'rend'],
-    dynamictargets:['%a%a', '&how', 'helm', 'salt', 'then', 'bool'],
-    matchregex:'\\w\\w\\w\\w',
-    matchregexflags:'g',
-    checkgroups: false,
-    entries: 1,
-    hideflags: true,
-    leveltext:'Character classes are extremely useful, but can get lengthy in certain cases. Regex provides some shortcuts for commonly needed character classes.<br/><br/><span class="code">\\w</span> is one such shortcut. It corresponds to a character class which matches any letter (uppercase or lower), any number, and underscores. It\'s formal name is the \'word character\', which may be somewhat offputting due to it\'s aforementioned inclusion of numbers and underscores.<br/><br/>Side note: for most of these \'shortcuts\', if you capitalize the letter, i.e. <span class="code">\\W</span>, it has the effect of inverting the selection. (in this case it would be any character that <em>isn\'t</em> a letter, number or underscore)',
-    addref:[['\\w', 'equivalent to [a-zA-Z0-9_]'],
-            ['\\W', 'equivalent to [^a-zA-Z0-9_]']],
-    next:'end',
-    prev:'more_specific_non'
-    },
-    an_unknown_quantity_i:{name:'An Unknown Quantity, Part I',
-    statictargets:['ct scan', 'cat scan', 'emi scan'],
-    dynamictargets:['caaaat', 'caaaaaaaaaaaaaaaaaaaat'],
-    matchregex:'ca*t',
-    matchregexflags:'g',
-    checkgroups:false,
-    entries:1,
-    hideflags:true,
-    leveltext:'',
-    addref:[['*', '0 or more']],
-    next:null,
-    prev:null
-    },
-    beyond_the_boundary:{name:'Beyond the Boundary',
-    statictargets:['THE END', '(for now)'],
-    dynamictargets:[],
-    matchregex:'the end',
-    matchregexflags:'g',
-    checkgroups: false,
-    entries: 0,
-    hideflags: true,
-    leveltext:'THE END<br/>(for now)',
-    addref:[],
-    next:null,
-    prev:null
-    },
-    end:{name:'The End',
-    statictargets:['THE END', '(for now)'],
-    dynamictargets:[],
-    matchregex:'the end',
-    matchregexflags:'g',
-    checkgroups: false,
-    entries: 0,
-    hideflags: true,
-    leveltext:'THE END<br/>(for now)',
-    addref:[],
-    next:null,
-    prev:null
-    }
-}
 let curLevelId = 'intro'
 let curLevel = null
 let curEntries = []
 let curTargets = []
-let resetData = function(save) {
+function resetData(save) {
     gameData = JSON.parse(JSON.stringify(defaultData))
     curLevelId = 'intro'
     curLevel = null
@@ -268,7 +173,7 @@ function start(level) {
     rightCol.querySelector('.leveltext').innerHTML = curLevel.leveltext
     rightCol.classList.remove('closed')
     bottomPane.classList.remove('closed')
-    game.innerHTML = ''
+    curTargets.forEach(t=>t.remove())
     regexEntry.innerHTML = ''
     subEntry.innerHTML = ''
     curTargets = []
@@ -346,14 +251,38 @@ function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
     }
     
 }
+let menuOpen = false
+let menuDebounce = false
+function handleKey(e) {
+    if (!menuDebounce) {
+        switch (e.code) {
+            case 'Enter':
+                return handleEntry(e)
+            case 'KeyJ':
+                return openMenu()
+        }
+    }
+}
 function handleEntry(e) {
-    if (e.keyCode === 13) {
+    if (!menuOpen) {
         e.preventDefault()
         document.activeElement.blur()
         spanifyAndCheck()
     }
 }
-document.addEventListener('keyup', handleEntry)
+function openMenu() {
+    menuOpen = true
+    menuDebounce = true
+    rightCol.classList.add('closed')
+    bottomPane.classList.add('closed')
+}
+function closeMenu() {
+    menuOpen = false
+
+    rightCol.classList.remove('closed')
+    bottomPane.classList.remove('closed')
+}
+document.addEventListener('keyup', handleKey)
 if (isTest) {
     let tests = document.createElement('script')
     tests.setAttribute('src', 'tests.js')
