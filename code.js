@@ -259,7 +259,7 @@ function handleKey(e) {
             case 'Enter':
                 return handleEntry(e)
             case 'KeyJ':
-                return openMenu()
+                return toggleMenu()
         }
     }
 }
@@ -270,17 +270,24 @@ function handleEntry(e) {
         spanifyAndCheck()
     }
 }
+function toggleMenu() {
+    if (!menuDebounce) {
+        menuDebounce = true
+        if (menuOpen) {
+            closeMenu()
+        } else {
+            openMenu()
+        }
+        setTimeout(()=>menuDebounce = false, 1000)
+    }
+}
 function openMenu() {
     menuOpen = true
-    menuDebounce = true
-    rightCol.classList.add('closed')
-    bottomPane.classList.add('closed')
+    menu.classList.add('open')
 }
 function closeMenu() {
     menuOpen = false
-
-    rightCol.classList.remove('closed')
-    bottomPane.classList.remove('closed')
+    menu.classList.remove('open')
 }
 document.addEventListener('keyup', handleKey)
 if (isTest) {

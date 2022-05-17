@@ -85,15 +85,20 @@ body {
 }
 #menu {
     position: absolute;
+    display: flex;
+    left: -8px;
     z-index: 2;
     background-color: var(--background);
-    transition: opacity 0.3s;
-    opacity: 0;
+    transition-property: width;
+    transition-duration: 1.2s;
+    transition-timing-function: ease;
+    outline: 8px solid var(--borders);
     height: 100%;
-    width: 100%;
+    width: 0%;
 }
 #menu.open {
-    opacity: 1;
+    left: 0px;
+    width: 100%;
 }
 .fadeout {
     opacity: 0;

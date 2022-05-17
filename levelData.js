@@ -75,8 +75,9 @@ const levelData = {
     checkgroups: false,
     entries: 1,
     hideflags: true,
-    leveltext:'Next up: <span class="code">\\b</span>. This token is known as a \'word boundary assertion\'. It does not match a character, but rather a space between a word character and a non-word character. This is most often used to match whole words, avoiding a match when a word is contained within another word. For example, to match the word \'plot\', but not \'subplot\'.<br/><br/><span class="code">\\B</span> is a similar token in that it matches a space between two characters; it is however the inverse of <span class="code">\\b</span> and will match the space between two characters that either both word characters or both non-word characters.',
-    addref:[['\\b', 'boundary (zero length)']],
+    leveltext:'Next up: <span class="code">\\b</span>. This token is known as a \'word boundary assertion\'. It does not match a character, but rather a space between a word character and a non-word character. This is most often used to match whole words, avoiding a match when a word is contained within another word. For example, to match the word \'plot\', but not \'subplot\'.<br/><br/><span class="code">\\B</span> is a similar token in that it matches a space between two characters; it is however the inverse of <span class="code">\\b</span> and will match the space between two characters that are either both word characters or both non-word characters.',
+    addref:[['\\b', 'word boundary (zero length)'],
+            ['\\B', 'non-word boundary (zero length)']],
     next:'end',
     prev:'word-esque'
     },
