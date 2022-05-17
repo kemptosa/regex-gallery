@@ -5,6 +5,7 @@ let game = document.getElementById('game')
 let regexEntry = document.getElementById('regex-entry')
 let subEntry = document.getElementById('sub-entry')
 let menu = document.getElementById('menu')
+let menuView = document.getElementById('menu-view')
 
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
 
@@ -289,6 +290,17 @@ function closeMenu() {
     menuOpen = false
     menu.classList.remove('open')
 }
+let numLevels = 0
+for (const [key, level] of Object.entries(levelData)) {
+    let levelButton = document.createElement('button')
+    levelButton.className = 'level'
+    levelButton.style = `top: ${Math.floor(numLevels / 4)*75}px; left: ${numLevels % 4 * 90}px;`
+    levelButton.innerText = level.name
+    levelButton.addEventListener('click', ()=>{start(key); closeMenu()})
+    menuView.append(levelButton)
+    numLevels++
+}
+menuView.style.transform = 'translate(10px, 10px)'
 document.addEventListener('keyup', handleKey)
 if (isTest) {
     let tests = document.createElement('script')

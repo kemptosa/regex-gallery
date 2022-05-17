@@ -85,13 +85,12 @@ body {
 }
 #menu {
     position: absolute;
+    overflow: hidden;
     display: flex;
     left: -8px;
     z-index: 2;
     background-color: var(--background);
-    transition-property: width;
-    transition-duration: 1.2s;
-    transition-timing-function: ease;
+    transition: width 1.2s ease;
     outline: 8px solid var(--borders);
     height: 100%;
     width: 0%;
@@ -99,6 +98,28 @@ body {
 #menu.open {
     left: 0px;
     width: 100%;
+}
+#menu-left {
+    flex: 0.2 0 12rem;
+    background-color: var(--background-layer2);
+    border-right: 4px solid var(--borders);
+}
+#menu-right {
+    flex: 1 0 0;
+    overflow: hidden;
+}
+#menu-view {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.level {
+    position: absolute;
+    background-color: var(--background-layer3);
+    color: var(--text);
+    border-style: solid;
+    width: min-content;
+    height: min-content;
 }
 .fadeout {
     opacity: 0;
