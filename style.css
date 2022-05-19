@@ -3,7 +3,9 @@ body {
     --background-layer2: #292828;
     --background-layer3: #202020;
     --borders: #161212;
-    --accent: #2e2583;
+    --accent: #332896;
+    --accent-hover: #3f33aa;
+    --accent-disabled: #0f0c2b;
     --text: #e7f6ff;
     --highlight: #8b8b8b;
     --texthidden: #e7f6ff00;
@@ -100,9 +102,36 @@ body {
     width: 100%;
 }
 #menu-left {
+    display: flex;
+    flex-direction: column;
     flex: 0.2 0 12rem;
     background-color: var(--background-layer2);
     border-right: 4px solid var(--borders);
+}
+#menu-level-text {
+    padding: 0.5rem;
+    line-height: 180%;
+    flex: 1 0 0;
+    color: var(--text);
+}
+#menu-level-text > h3 {
+    margin-top: 0;
+}
+#level-start-button {
+    flex: 0 0 3rem;
+    margin: 0.75rem;
+    color: var(--text);
+    font-size: x-large;
+    font-weight: 100;
+    background-color: var(--accent);
+    border: solid 2px var(--accent-disabled);
+}
+#level-start-button.inactive {
+    border: solid 2px var(--borders);
+    background-color: var(--accent-disabled);
+}
+#level-start-button:hover:not(.inactive) {
+    background-color: var(--accent-hover);
 }
 #menu-right {
     flex: 1 0 0;

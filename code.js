@@ -6,6 +6,8 @@ let regexEntry = document.getElementById('regex-entry')
 let subEntry = document.getElementById('sub-entry')
 let menu = document.getElementById('menu')
 let menuView = document.getElementById('menu-view')
+let menuLevelText = document.getElementById('menu-level-text')
+let menuLevelStart = document.getElementById('level-start-button')
 
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
 
@@ -290,13 +292,29 @@ function closeMenu() {
     menuOpen = false
     menu.classList.remove('open')
 }
+function showLevelInfo(key) {
+    let levelName = levelData[key].name
+    let topics = levelData[key].addref.map((ref)=>{
+        return `<span class="code">${ref[0]}</span> - <span class="code">${ref[1]}</span>`
+    })
+    menuLevelStart.classList.remove('inactive')
+    menuLevelStart.onclick = () => {
+        start(key)
+        closeMenu()
+        menuDebounce = true
+        setTimeout(()=>menuDebounce = false, 1000)
+    }
+    menuLevelText.innerHTML = `<h3>${levelName}</h3><h4>Covered topics:</h4>${topics.join('<br/>')}`
+}
 let numLevels = 0
 for (const [key, level] of Object.entries(levelData)) {
     let levelButton = document.createElement('button')
     levelButton.className = 'level'
     levelButton.style = `top: ${Math.floor(numLevels / 4)*75}px; left: ${numLevels % 4 * 90}px;`
     levelButton.innerText = level.name
-    levelButton.addEventListener('click', ()=>{start(key); closeMenu()})
+    levelButton.addEventListener('click', ()=>{
+        showLevelInfo(key)
+    })
     menuView.append(levelButton)
     numLevels++
 }
