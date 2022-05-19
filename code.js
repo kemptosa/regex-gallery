@@ -5,6 +5,7 @@ let game = document.getElementById('game')
 let regexEntry = document.getElementById('regex-entry')
 let subEntry = document.getElementById('sub-entry')
 let menu = document.getElementById('menu')
+let menuRight = document.getElementById('menu-right')
 let menuView = document.getElementById('menu-view')
 let menuLevelText = document.getElementById('menu-level-text')
 let menuLevelStart = document.getElementById('level-start-button')
@@ -292,13 +293,20 @@ function closeMenu() {
     menuOpen = false
     menu.classList.remove('open')
 }
+let curX = 10
+let curY = 10
+let startPos = {x:-1, y:-1}
+let lastPos = {x:-1, y:-1}
+let moving = false
+let changedPos = (x,y)=> !(startPos.x===x && startPos.y===y)
 function showLevelInfo(key) {
     let levelName = levelData[key].name
     let topics = levelData[key].addref.map((ref)=>{
         return `<span class="code">${ref[0]}</span> - <span class="code">${ref[1]}</span>`
     })
     menuLevelStart.classList.remove('inactive')
-    menuLevelStart.onclick = () => {
+    menuLevelStart.onmouseup = (ev) => {
+        console.log("yes")
         start(key)
         closeMenu()
         menuDebounce = true
@@ -306,14 +314,40 @@ function showLevelInfo(key) {
     }
     menuLevelText.innerHTML = `<h3>${levelName}</h3><h4>Covered topics:</h4>${topics.join('<br/>')}`
 }
+function startDrag(ev) {
+    lastPos.x = ev.x
+    lastPos.y = ev.y
+    startPos.x = ev.x
+    startPos.y = ev.y
+    moving = true
+}
+function endDrag() {
+    moving = false
+}
+function moveDrag(ev) {
+    if (moving) {
+        let deltaX = ev.x - lastPos.x
+        let deltaY = ev.y - lastPos.y
+        curX += deltaX
+        curY += deltaY
+        menuView.style.transform = `translate(${curX}px, ${curY}px)`
+        lastPos.x = ev.x
+        lastPos.y = ev.y
+    }
+}
+document.addEventListener('mousemove', moveDrag)
+menuRight.addEventListener('mousedown', startDrag)
+document.addEventListener('mouseup', endDrag)
 let numLevels = 0
 for (const [key, level] of Object.entries(levelData)) {
     let levelButton = document.createElement('button')
     levelButton.className = 'level'
     levelButton.style = `top: ${Math.floor(numLevels / 4)*75}px; left: ${numLevels % 4 * 90}px;`
     levelButton.innerText = level.name
-    levelButton.addEventListener('click', ()=>{
-        showLevelInfo(key)
+    levelButton.addEventListener('click', (ev)=>{
+        if (!changedPos(ev.x, ev.y)) {
+            showLevelInfo(key)
+        }
     })
     menuView.append(levelButton)
     numLevels++
