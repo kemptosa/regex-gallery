@@ -62,10 +62,10 @@ const levelData = {
     checkgroups:false,
     entries:1,
     hideflags:true,
-    leveltext:'',
+    leveltext:'Up to this point, we have only dealt with matching text of a specific length, but what if you dont know the exact length? For example, you might be trying to parse some robotically scanned text of a book where there are occasionally double spaces in the text. The following levels will deal with modifiers that can make a regular expression match text of variable length.<br/><br/>First up: <span class="code">*</span>. This modifier applies to the token directly preceding it and means \'zero or more\'. A token in this case does not necessarily mean a single character in your regular expression; <span class="code">\\w</span>, <span class="code">[abc]</span>, and <span class="code">(?:abc)</span> are all examples of singlular tokens. (That last one is called a \'non-capturing group\' and will be covered later.)',
     addref:[['*', '0 or more']],
-    next:null,
-    prev:null
+    next:'end',
+    prev:'beyond_the_boundary'
     },
     beyond_the_boundary:{name:'Beyond the Boundary',
     statictargets:['catfish', 'bobcat', 'catatonic'],
@@ -78,7 +78,7 @@ const levelData = {
     leveltext:'Next up: <span class="code">\\b</span>. This token is known as a \'word boundary assertion\'. It does not match a character, but rather a space between a word character and a non-word character. This is most often used to match whole words, avoiding a match when a word is contained within another word. For example, to match the word \'plot\', but not \'subplot\'.<br/><br/><span class="code">\\B</span> is a similar token in that it matches a space between two characters; it is however the inverse of <span class="code">\\b</span> and will match the space between two characters that are either both word characters or both non-word characters.',
     addref:[['\\b', 'word boundary (zero length)'],
             ['\\B', 'non-word boundary (zero length)']],
-    next:'end',
+    next:'an_unknown_quantity_i',
     prev:'word-esque'
     },
     end:{name:'The End',
