@@ -296,6 +296,7 @@ function closeMenu() {
 }
 let curX = 10
 let curY = 10
+let zoomLevel = 1
 let startPos = {x:-1, y:-1}
 let lastPos = {x:-1, y:-1}
 let moving = false
@@ -331,11 +332,19 @@ function moveDrag(ev) {
         let deltaY = ev.y - lastPos.y
         curX += deltaX
         curY += deltaY
-        menuView.style.transform = `translate(${curX}px, ${curY}px)`
+        updateView()
         lastPos.x = ev.x
         lastPos.y = ev.y
     }
 }
+function updateView() {
+    menuView.style.transform = `translate(${curX}px, ${curY}px) scale(${zoomLevel})`
+}
+menuRight.addEventListener('wheel', (ev)=>{
+    ev.preventDefault();
+    zoomLevel += ev.deltaY * -0.0006;
+    updateView()
+})
 document.addEventListener('mousemove', moveDrag)
 menuRight.addEventListener('mousedown', startDrag)
 document.addEventListener('mouseup', endDrag)
