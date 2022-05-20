@@ -220,6 +220,8 @@ function addRegexEntry(regexEntry) {
     }
     newRegexInput.addEventListener('focusout', fixText)
     newFlagInput.addEventListener('focusout', fixText)
+    newRegexInput.addEventListener('focusout', handleEntry)
+    newFlagInput.addEventListener('focusout', handleEntry)
     curEntries.push([newRegexInput, newFlagInput])
     regexEntry.append(newP)
 }
@@ -261,7 +263,7 @@ function handleKey(e) {
     if (!menuDebounce) {
         switch (e.code) {
             case 'Enter':
-                return handleEntry(e)
+                return document.activeElement.blur()
             case 'KeyJ':
                 return toggleMenu()
         }
@@ -269,7 +271,6 @@ function handleKey(e) {
 }
 function handleEntry(e) {
     if (!menuOpen) {
-        e.preventDefault()
         document.activeElement.blur()
         spanifyAndCheck()
     }
