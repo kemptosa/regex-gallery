@@ -10,7 +10,12 @@ const levelData = {
     leveltext:'Welcome to Regex Gallery! Regex is an extremely powerful tool for searching and replacing within text. To start off, try matching the word "regex" as seen on the left. To start, enter a regular expression into the space in the bottom left between the <span class="code">//</span>.<br/><br/>The simplest way to match something with regex is to simply type it out. Most characters in regex have no explicit meaning on their own and can be used with no special considerations.',
     addref:[],
     next:'cats_and_bars',
-    prev:null
+    prev:null,
+    mapdata: {
+        x: 0,
+        y: 0,
+        visible:true
+    }
     },
     cats_and_bars:{name:'Cats and Bars',
     statictargets:['cat', 'bar'],
@@ -25,7 +30,12 @@ const levelData = {
     leveltext:'Here you will need the first special token, <span class="code">.</span><br/><br/>The <span class="code">.</span> token is a "wildcard"; it will match any character or symbol in a given position.<br/><br/>To complete this level, you should match any 3 letter word with an "a" in the center.',
     addref:[['.', 'wildcard']],
     next:'more_specific_non',
-    prev:'intro'
+    prev:'intro',
+    mapdata: {
+        x: 90,
+        y: 0,
+        visible:true
+    }
     },
     more_specific_non:{name:'More Specific Non-specificity',
     statictargets:['dab', 'cat', 'cob'],
@@ -38,7 +48,12 @@ const levelData = {
     leveltext:'Perhaps <span class="code">.</span> is too vague for you. Maybe you only want to match a certain set of characters in a certain position, rather than any character in that position.<br/><br/>Good news! With regex, there\'s always a way! <span class="code">[ ... ]</span> provides a way to match a set of characters, also known as a character class.<br/><br/>For example, the regex <span class="code">m[aeiou]t</span> would match any 3 characters that starts with m, ends with t, and has a vowel in the middle. (met, or mat, or mot, etc...)<br/><br/>For this level, you must match a set of 3 characters, each of which can be one of two options. Try working out the two possible characters you need in each position from the targets provided on the left.',
     addref:[['[...]', 'set of characters']],
     next:'word_esque',
-    prev:'cats_and_bars'
+    prev:'cats_and_bars',
+    mapdata: {
+        x: 180,
+        y: 0,
+        visible:true
+    }
     },
     word_esque:{name:'Word-esque',
     statictargets:['%##@', 'Rita', 'pack', 'rend'],
@@ -52,7 +67,12 @@ const levelData = {
     addref:[['\\w', 'equivalent to [a-zA-Z0-9_]'],
             ['\\W', 'equivalent to [^a-zA-Z0-9_]']],
     next:'beyond_the_boundary',
-    prev:'more_specific_non'
+    prev:'more_specific_non',
+    mapdata: {
+        x: 270,
+        y: 0,
+        visible:true
+    }
     },
     an_unknown_quantity_i:{name:'An Unknown Quantity, Part I',
     statictargets:['ct scan', 'cat scan', 'emi scan'],
@@ -65,7 +85,12 @@ const levelData = {
     leveltext:'Up to this point, we have only dealt with matching text of a specific length, but what if you dont know the exact length? For example, you might be trying to parse some robotically scanned text of a book where there are occasionally double spaces in the text. The following levels will deal with modifiers that can make a regular expression match text of variable length.<br/><br/>First up: <span class="code">*</span>. This modifier applies to the token directly preceding it and means \'zero or more\'. A token in this case does not necessarily mean a single character in your regular expression; <span class="code">\\w</span>, <span class="code">[abc]</span>, and <span class="code">(?:abc)</span> are all examples of singlular tokens. (That last one is called a \'non-capturing group\' and will be covered later.)',
     addref:[['*', '0 or more']],
     next:'end',
-    prev:'beyond_the_boundary'
+    prev:'beyond_the_boundary',
+    mapdata: {
+        x: 0,
+        y: 75,
+        visible:true
+    }
     },
     beyond_the_boundary:{name:'Beyond the Boundary',
     statictargets:['catfish', 'bobcat', 'catatonic'],
@@ -79,7 +104,12 @@ const levelData = {
     addref:[['\\b', 'word boundary (zero length)'],
             ['\\B', 'non-word boundary (zero length)']],
     next:'an_unknown_quantity_i',
-    prev:'word-esque'
+    prev:'word-esque',
+    mapdata: {
+        x: 90,
+        y: 75,
+        visible:true
+    }
     },
     end:{name:'The End',
     statictargets:['THE END', '(for now)'],
@@ -92,6 +122,11 @@ const levelData = {
     leveltext:'THE END<br/>(for now)',
     addref:[],
     next:null,
-    prev:null
+    prev:null,
+    mapdata: {
+        x: 180,
+        y: 75,
+        visible:false
+    }
     }
 }

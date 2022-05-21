@@ -9,6 +9,9 @@ let menuRight = document.getElementById('menu-right')
 let menuView = document.getElementById('menu-view')
 let menuLevelText = document.getElementById('menu-level-text')
 let menuLevelStart = document.getElementById('level-start-button')
+let navPrev = document.getElementById('prev-nav')
+let navMap = document.getElementById('map-nav')
+let navNext = document.getElementById('next-nav')
 
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
 
@@ -75,8 +78,10 @@ void function loadData() {
     } else {
         gameData = JSON.parse(JSON.stringify(gameData))
     }
+    gameData.completedSet = new Set(gameData.completed)
 }()
 let saveData = function() {
+    gameData.completed = [...gameData.completedSet]
     localStorage.setItem('gamedata', JSON.stringify(gameData))
 }
 if (!gameData.introPlayed) {
@@ -139,7 +144,7 @@ function spanifyAndCheck() {
         isAllComplete = isAllComplete && isComplete
     }
     if (isAllComplete) {
-        gameData.completed.push(curLevelId)
+        gameData.completedSet.add(curLevelId)
         if (!isTest) {
             saveData()
         }
@@ -163,7 +168,7 @@ function start(level) {
     if (level === undefined) {
         while (levelData[curLevelId].next !== null) {
             let next = levelData[curLevelId].next
-            if (gameData.completed.includes(curLevelId)) {
+            if (gameData.completedSet.has(curLevelId)) {
                 curLevelId = next
             } else {
                 break
@@ -201,6 +206,26 @@ function start(level) {
     for (let i = 0; i < curLevel.entries; i += 1) {
         addRegexEntry(regexEntry)
     }
+    navNext.onclick = ()=>{}
+    navPrev.onclick = ()=>{}
+    if (curLevel.next === null) {
+        navNext.classList.add('inactive')
+        setTimeout(()=>{openMenu()},3500)
+    } else {
+        if (gameData.completedSet.has(curLevelId)) {
+            navNext.onclick = ()=>{start(curLevel.next)}
+            navNext.classList.remove('inactive')
+        } else {
+            navNext.classList.add('inactive')
+        }
+    }
+    if (curLevel.prev === null) {
+        navPrev.classList.add('inactive')
+    } else {
+        navPrev.onclick = ()=>{start(curLevel.prev)}
+        navPrev.classList.remove('inactive')
+    }
+    updateMenuLevels()
 }
 function addRegexEntry(regexEntry) {
     let newRegexInput = document.createElement('span')
@@ -264,11 +289,12 @@ function handleKey(e) {
         switch (e.code) {
             case 'Enter':
                 return document.activeElement.blur()
-            case 'KeyJ':
-                return toggleMenu()
+            //case 'KeyJ':
+            //    return toggleMenu()
         }
     }
 }
+navMap.onclick = ()=>{toggleMenu()}
 function handleEntry(e) {
     if (!menuOpen) {
         document.activeElement.blur()
@@ -308,7 +334,6 @@ function showLevelInfo(key) {
     })
     menuLevelStart.classList.remove('inactive')
     menuLevelStart.onmouseup = (ev) => {
-        console.log("yes")
         start(key)
         closeMenu()
         menuDebounce = true
@@ -348,20 +373,26 @@ menuRight.addEventListener('wheel', (ev)=>{
 document.addEventListener('mousemove', moveDrag)
 menuRight.addEventListener('mousedown', startDrag)
 document.addEventListener('mouseup', endDrag)
-let numLevels = 0
-for (const [key, level] of Object.entries(levelData)) {
-    let levelButton = document.createElement('button')
-    levelButton.className = 'level'
-    levelButton.style = `top: ${Math.floor(numLevels / 4)*75}px; left: ${numLevels % 4 * 90}px;`
-    levelButton.innerText = level.name
-    levelButton.addEventListener('click', (ev)=>{
-        if (!changedPos(ev.x, ev.y)) {
-            showLevelInfo(key)
+function updateMenuLevels() {
+    menuView.innerHTML = ''
+    for (const [key, level] of Object.entries(levelData)) {
+        if (!level.mapdata.visible) {continue}
+        if (!gameData.completedSet.has(levelData[key].prev)) {
+            if (levelData[key].prev !== null) {continue}
         }
-    })
-    menuView.append(levelButton)
-    numLevels++
+        let levelButton = document.createElement('button')
+        levelButton.className = 'level'
+        levelButton.style = `top: ${level.mapdata.y}px; left: ${level.mapdata.x}px;`
+        levelButton.innerText = level.name
+        levelButton.addEventListener('click', (ev)=>{
+            if (!changedPos(ev.x, ev.y)) {
+                showLevelInfo(key)
+            }
+        })
+        menuView.append(levelButton)
+    }
 }
+updateMenuLevels()
 menuView.style.transform = 'translate(10px, 10px)'
 document.addEventListener('keyup', handleKey)
 if (isTest) {
