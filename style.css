@@ -184,6 +184,18 @@ body {
     width: min-content;
     height: min-content;
 }
+.level.inactive {
+    border-color: var(--textdisabled);
+    color: var(--textdisabled);
+}
+.line {
+    position: absolute;
+    height: 2px;
+    background-color: var(--text);
+}
+.line.inactive {
+    background-color: var(--textdisabled);
+}
 .fadeout {
     opacity: 0;
 }

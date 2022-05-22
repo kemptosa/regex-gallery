@@ -227,6 +227,14 @@ function start(level) {
     }
     updateMenuLevels()
 }
+function startNextLevel() {
+    if (curLevel.next.length === 1) {
+        start(curLevel.next[0])
+    } else {
+        openMenu()
+        //focusLevels(curLevel.next)
+    }
+}
 function addRegexEntry(regexEntry) {
     let newRegexInput = document.createElement('span')
     let newFlagInput = document.createElement('span')
@@ -373,26 +381,78 @@ menuRight.addEventListener('wheel', (ev)=>{
 document.addEventListener('mousemove', moveDrag)
 menuRight.addEventListener('mousedown', startDrag)
 document.addEventListener('mouseup', endDrag)
-function updateMenuLevels() {
+let levelMap = new Map()
+let lineMap = new Map()
+void function createMenuLevels() {
     menuView.innerHTML = ''
     for (const [key, level] of Object.entries(levelData)) {
         if (!level.mapdata.visible) {continue}
-        if (!gameData.completedSet.has(levelData[key].prev)) {
-            if (levelData[key].prev !== null) {continue}
+        if (level.prev !== null) {
+            let line = makeMenuLine(level.mapdata, levelData[level.prev].mapdata)
+            lineMap.set(key, line)
+            menuView.append(line)
         }
+    }
+    for (const [key, level] of Object.entries(levelData)) {
+        if (!level.mapdata.visible) {continue}
         let levelButton = document.createElement('button')
         levelButton.className = 'level'
-        levelButton.style = `top: ${level.mapdata.y}px; left: ${level.mapdata.x}px;`
+        levelButton.style = `top: ${level.mapdata.y}px; left: ${level.mapdata.x}px; transform: translate(-50%, -50%);`
         levelButton.innerText = level.name
-        levelButton.addEventListener('click', (ev)=>{
+        levelMap.set(key, levelButton)
+        menuView.append(levelButton)
+    }
+}()
+function updateMenuLevels() {
+    for (const [key, button] of levelMap.entries()) {
+        if (!gameData.completedSet.has(levelData[key].prev)) {
+            if (levelData[key].prev !== null) {
+                button.classList.add('inactive')
+                button.onclick = ()=>{}
+                continue;
+            }
+        }
+        button.classList.remove('inactive')
+        button.onclick = (ev)=>{
             if (!changedPos(ev.x, ev.y)) {
                 showLevelInfo(key)
             }
-        })
-        menuView.append(levelButton)
+        }
+    }
+    updateMenuLines()
+}
+function updateMenuLines() {
+    for (const [key, line] of lineMap.entries()) {
+        if (!gameData.completedSet.has(levelData[key].prev)) {
+            if (levelData[key].prev !== null) {
+                line.classList.add('inactive')
+                continue;
+            }
+        }
+        line.classList.remove('inactive')
     }
 }
-updateMenuLevels()
+function makeMenuLine(pos1, pos2) {
+    let line = document.createElement('div')
+    line.className = 'line'
+    let mid = getMidpoint(pos1, pos2)
+    let angle = getAngle(pos1, pos2)
+    let len = getLength(pos1, pos2)
+    line.style = `transform: translate(-50%, -50%) rotate(${angle}rad); width: ${len}px; top: ${mid.y}px; left: ${mid.x}px;`
+    return line
+}
+function getMidpoint(p1, p2) {
+    return {x: (p1.x+p2.x)/2, y: (p1.y+p2.y)/2}
+}
+function getAngle(p1, p2) {
+    let x = p1.x - p2.x
+    let y = p1.y - p2.y
+    return Math.atan2(y, x)
+}
+function getLength(p1, p2) {
+    return Math.sqrt(((p1.x-p2.x)**2) + ((p1.y-p2.y)**2))
+}
+//updateMenuLevels()
 menuView.style.transform = 'translate(10px, 10px)'
 document.addEventListener('keyup', handleKey)
 if (isTest) {

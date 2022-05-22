@@ -104,7 +104,7 @@ const levelData = {
     addref:[['\\b', 'word boundary (zero length)'],
             ['\\B', 'non-word boundary (zero length)']],
     next:'an_unknown_quantity_i',
-    prev:'word-esque',
+    prev:'word_esque',
     mapdata: {
         x: 90,
         y: 75,
