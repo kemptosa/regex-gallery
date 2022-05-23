@@ -151,7 +151,8 @@ function spanifyAndCheck() {
         game.classList.add('fadeout')
         setTimeout(()=>{
             game.classList.remove('fadeout')
-            start(curLevel.next)
+            updateMenuLevels()
+            startNextLevel()
         }, 1000)
     }
 }
@@ -208,7 +209,7 @@ function start(level) {
     }
     navNext.onclick = ()=>{}
     navPrev.onclick = ()=>{}
-    if (curLevel.next === null) {
+    if (curLevelId === 'end') {
         navNext.classList.add('inactive')
         setTimeout(()=>{openMenu()},3500)
     } else {
@@ -228,11 +229,11 @@ function start(level) {
     updateMenuLevels()
 }
 function startNextLevel() {
-    if (curLevel.next.length === 1) {
-        start(curLevel.next[0])
+    if (curLevel.next !== null) {
+        start(curLevel.next)
     } else {
         openMenu()
-        //focusLevels(curLevel.next)
+        focusLevels([curLevelId])
     }
 }
 function addRegexEntry(regexEntry) {
@@ -328,8 +329,8 @@ function closeMenu() {
     menuOpen = false
     menu.classList.remove('open')
 }
-let curX = 10
-let curY = 10
+let curX = 0
+let curY = 0
 let zoomLevel = 1
 let startPos = {x:-1, y:-1}
 let lastPos = {x:-1, y:-1}
@@ -348,6 +349,22 @@ function showLevelInfo(key) {
         setTimeout(()=>menuDebounce = false, 1000)
     }
     menuLevelText.innerHTML = `<h3>${levelName}</h3><h4>Covered topics:</h4>${topics.join('<br/>')}`
+}
+function focusLevels(levels) {
+    let totX = 0
+    let totY = 0
+    for (const levelKey of levels) {
+        let level = levelData[levelKey]
+        let mapdata = level.mapdata
+        totX += mapdata.x
+        totY += mapdata.y
+    }
+    totX /= levels.length
+    totY /= levels.length
+    curX = -totX
+    curY = -totY
+    zoomLevel = 1
+    updateView()
 }
 function startDrag(ev) {
     lastPos.x = ev.x
@@ -371,7 +388,7 @@ function moveDrag(ev) {
     }
 }
 function updateView() {
-    menuView.style.transform = `translate(${curX}px, ${curY}px) scale(${zoomLevel})`
+    menuView.style.transform = `translate(50%, 50%) translate(${curX}px, ${curY}px) scale(${zoomLevel})`
 }
 menuRight.addEventListener('wheel', (ev)=>{
     ev.preventDefault();
@@ -418,6 +435,11 @@ function updateMenuLevels() {
                 showLevelInfo(key)
             }
         }
+        if (!gameData.completedSet.has(key)) {
+            button.classList.add('highlight')
+        } else {
+            button.classList.remove('highlight')
+        }
     }
     updateMenuLines()
 }
@@ -453,7 +475,7 @@ function getLength(p1, p2) {
     return Math.sqrt(((p1.x-p2.x)**2) + ((p1.y-p2.y)**2))
 }
 //updateMenuLevels()
-menuView.style.transform = 'translate(10px, 10px)'
+menuView.style.transform = 'translate(50%, 50%)'
 document.addEventListener('keyup', handleKey)
 if (isTest) {
     let tests = document.createElement('script')

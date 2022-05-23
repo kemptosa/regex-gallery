@@ -188,6 +188,9 @@ body {
     border-color: var(--textdisabled);
     color: var(--textdisabled);
 }
+.level.highlight {
+    animation: 1.5s linear 0s infinite normal highlight-border;
+}
 .line {
     position: absolute;
     height: 2px;
@@ -295,6 +298,12 @@ p.intro {
 }
 @keyframes highlights {
     50% { background-color: var(--highlight) }
+}
+@-webkit-keyframes highlight-border {
+    50% { border-color: var(--textdisabled) }
+}
+@keyframes highlight-border {
+    50% { border-color: var(--textdisabled) }
 }
 @-webkit-keyframes scroller {
     from { margin-left: -5rem; }

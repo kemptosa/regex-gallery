@@ -29,7 +29,7 @@ const levelData = {
     hideflags: true,
     leveltext:'Here you will need the first special token, <span class="code">.</span><br/><br/>The <span class="code">.</span> token is a "wildcard"; it will match any character or symbol in a given position.<br/><br/>To complete this level, you should match any 3 letter word with an "a" in the center.',
     addref:[['.', 'wildcard']],
-    next:'more_specific_non',
+    next: null,
     prev:'intro',
     mapdata: {
         x: 90,
@@ -85,7 +85,7 @@ const levelData = {
     leveltext:'Up to this point, we have only dealt with matching text of a specific length, but what if you dont know the exact length? For example, you might be trying to parse some robotically scanned text of a book where there are occasionally double spaces in the text. The following levels will deal with modifiers that can make a regular expression match text of variable length.<br/><br/>First up: <span class="code">*</span>. This modifier applies to the token directly preceding it and means \'zero or more\'. A token in this case does not necessarily mean a single character in your regular expression; <span class="code">\\w</span>, <span class="code">[abc]</span>, and <span class="code">(?:abc)</span> are all examples of singlular tokens. (That last one is called a \'non-capturing group\' and will be covered later.)',
     addref:[['*', '0 or more']],
     next:'end',
-    prev:'beyond_the_boundary',
+    prev:'cats_and_bars',
     mapdata: {
         x: 0,
         y: 75,
@@ -106,20 +106,20 @@ const levelData = {
     next:'an_unknown_quantity_i',
     prev:'word_esque',
     mapdata: {
-        x: 90,
+        x: 180,
         y: 75,
         visible:true
     }
     },
     end:{name:'The End',
-    statictargets:['THE END', '(for now)'],
+    statictargets:['THE END', '(of this path)'],
     dynamictargets:[],
     matchregex:'the end',
     matchregexflags:'g',
     checkgroups: false,
     entries: 0,
     hideflags: true,
-    leveltext:'THE END<br/>(for now)',
+    leveltext:'THE END<br/>(of this path)',
     addref:[],
     next:null,
     prev:null,
