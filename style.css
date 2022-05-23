@@ -17,13 +17,15 @@ body.light {
     --background: #ffffff;
     --background-layer2: #dddddd;
     --background-layer3: #ffffff;
-    --borders: #161212;
-    --accent: #544ab1;
+    --borders: #cacaca;
+    --accent: #5d4cf3;
+    --accent-hover: #3f33aa;
+    --accent-disabled: #9a95c7;
     --text: #202020;
-    --highlight: #ffffff;
-    --texthidden: #cccccc00;
-    --textdisabled: #4c565e;
-    --textred: #ff8b8b;
+    --highlight: #c2c2c2;
+    --texthidden: #9c9c9c00;
+    --textdisabled: #9da8b1;
+    --textred: #684343;
 }
 body {
     height: 100vh;
@@ -31,7 +33,6 @@ body {
     margin: 0;
     display: flex;
     flex-direction: row;
-    
 }
 #left-col {
     display: flex;
@@ -152,6 +153,13 @@ body {
 #next-nav {
     flex: 1 0 0;
 }
+#toggle-light {
+    position: absolute;
+    color: var(--text);
+    background-color: var(--accent);
+    border: solid 2px var(--borders);
+    transform: translate(3px, 3px);
+}
 .nav-button {
     margin: 0rem 0.5rem;
     background-color: var(--accent);
@@ -180,6 +188,7 @@ body {
     position: absolute;
     background-color: var(--background-layer3);
     color: var(--text);
+    border-color: var(--text);
     border-style: solid;
     width: min-content;
     height: min-content;
@@ -189,7 +198,7 @@ body {
     color: var(--textdisabled);
 }
 .level.highlight {
-    animation: 1.5s linear 0s infinite normal highlight-border;
+    animation: 1.5s linear 0s infinite normal highlight-border, 1.5s linear 0s infinite normal highlights;
 }
 .line {
     position: absolute;

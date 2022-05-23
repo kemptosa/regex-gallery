@@ -12,6 +12,7 @@ let menuLevelStart = document.getElementById('level-start-button')
 let navPrev = document.getElementById('prev-nav')
 let navMap = document.getElementById('map-nav')
 let navNext = document.getElementById('next-nav')
+let toggleLight = document.getElementById('toggle-light')
 
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
 
@@ -119,8 +120,10 @@ function resetData(save) {
     curLevelId = 'intro'
     curLevel = null
     curEntries = []
+    curTargets.forEach(t=>t.remove())
     curTargets = []
     gameData.completedSet = new Set()
+    showLevelInfo('intro')
     if (save) {saveData()}
     start()
 }
@@ -483,3 +486,6 @@ if (isTest) {
     tests.setAttribute('src', 'tests.js')
     document.body.append(tests)
 }
+toggleLight.addEventListener('click', ()=>{
+    document.body.classList.toggle('light')
+})
