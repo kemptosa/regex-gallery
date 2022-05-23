@@ -69,6 +69,7 @@ let gameData =  {
     completed: [],
     introPlayed: false,
     currentLevel: 0,
+    completedSet: new Set()
 }
 defaultData = gameData
 void function loadData() {
