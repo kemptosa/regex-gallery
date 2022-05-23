@@ -68,8 +68,7 @@ let gameData =  {
     version: '0',
     completed: [],
     introPlayed: false,
-    currentLevel: 0,
-    completedSet: new Set()
+    currentLevel: 0
 }
 defaultData = gameData
 void function loadData() {
@@ -121,6 +120,7 @@ function resetData(save) {
     curLevel = null
     curEntries = []
     curTargets = []
+    gameData.completedSet = new Set()
     if (save) {saveData()}
     start()
 }
