@@ -1,51 +1,35 @@
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
-var rightCol = document.getElementById('right-col');
-var leftCol = document.getElementById('left-col');
-var bottomPane = document.getElementById('bottom-pane');
-var game = document.getElementById('game');
-var regexEntry = document.getElementById('regex-entry');
-var subEntry = document.getElementById('sub-entry');
-var menu = document.getElementById('menu');
-var menuRight = document.getElementById('menu-right');
-var menuView = document.getElementById('menu-view');
-var menuLevelText = document.getElementById('menu-level-text');
-var menuLevelStart = document.getElementById('level-start-button');
-var navPrev = document.getElementById('prev-nav');
-var navMap = document.getElementById('map-nav');
-var navNext = document.getElementById('next-nav');
-var toggleLight = document.getElementById('toggle-light');
-var isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname);
-Set.prototype.toggle = function (token) {
-    if (!this.delete(token)) {
-        this.add(token);
-        return true;
-    }
-    return false;
-};
+import { levelData } from './levelData.js';
+let rightCol = document.getElementById('right-col');
+let leftCol = document.getElementById('left-col');
+let bottomPane = document.getElementById('bottom-pane');
+let game = document.getElementById('game');
+let regexEntry = document.getElementById('regex-entry');
+let subEntry = document.getElementById('sub-entry');
+let menu = document.getElementById('menu');
+let menuRight = document.getElementById('menu-right');
+let menuView = document.getElementById('menu-view');
+let menuLevelText = document.getElementById('menu-level-text');
+let menuLevelStart = document.getElementById('level-start-button');
+let navPrev = document.getElementById('prev-nav');
+let navMap = document.getElementById('map-nav');
+let navNext = document.getElementById('next-nav');
+let toggleLight = document.getElementById('toggle-light');
+let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname);
 function overlapSpan(text, spans) {
-    var result = '';
-    var classes = new Set();
-    var ignore = true;
-    for (var i = 0; i < text.length; i += 1) {
-        var changed = false;
+    let result = '';
+    let classes = new Set();
+    let ignore = true;
+    for (let i = 0; i < text.length; i += 1) {
+        let changed = false;
         classes.clear();
-        for (var _i = 0, spans_1 = spans; _i < spans_1.length; _i++) {
-            var span = spans_1[_i];
-            var cl = span[0];
-            var start_1 = span[1];
-            var end = span[2];
-            if (start_1 <= i && i < end) {
+        for (const span of spans) {
+            let cl = span[0];
+            let start = span[1];
+            let end = span[2];
+            if (start <= i && i < end) {
                 classes.add(cl);
             }
-            changed || (changed = (start_1 === i) || (end === i));
+            changed || (changed = (start === i) || (end === i));
         }
         if (changed) {
             if (!ignore) {
@@ -55,7 +39,7 @@ function overlapSpan(text, spans) {
                 ignore = false;
             }
             if (classes.size !== 0) {
-                result += "<span class=\"".concat(Array.from(classes).join(' '), "\">");
+                result += `<span class="${Array.from(classes).join(' ')}">`;
             }
             else {
                 ignore = true;
@@ -72,15 +56,16 @@ function overlapSpan(text, spans) {
 //     rightCol.classList.toggle('closed')
 //     bottomPane.classList.toggle('closed')
 // }
-var gameData = {
+let gameData = {
     version: '0',
     completed: [],
     introPlayed: false,
-    currentLevel: 0
+    currentLevel: 0,
+    completedSet: new Set()
 };
-defaultData = gameData;
+let defaultData = gameData;
 void function loadData() {
-    var loadedData = localStorage.getItem('gamedata');
+    let loadedData = localStorage.getItem('gamedata');
     if (loadedData !== null) {
         gameData = JSON.parse(loadedData);
     }
@@ -89,70 +74,68 @@ void function loadData() {
     }
     gameData.completedSet = new Set(gameData.completed);
 }();
-var saveData = function () {
-    gameData.completed = __spreadArray([], gameData.completedSet, true);
+let saveData = function () {
+    gameData.completed = [...gameData.completedSet];
     localStorage.setItem('gamedata', JSON.stringify(gameData));
 };
 if (!gameData.introPlayed) {
-    var introText_1 = Array.from("welcome to regex gallery").reverse();
-    var currentText_1 = '';
-    var introContainer_1 = document.createElement('p');
-    introContainer_1.className = 'intro';
-    introContainer_1.innerText = '//';
-    game.append(introContainer_1);
-    var introLoop_1;
-    introLoop_1 = setInterval(function () {
-        introContainer_1.innerText = "/".concat(currentText_1, "/");
-        if (introText_1.length > 0) {
-            currentText_1 += introText_1.pop();
+    let introText = Array.from("welcome to regex gallery").reverse();
+    let currentText = '';
+    let introContainer = document.createElement('p');
+    introContainer.className = 'intro';
+    introContainer.innerText = '//';
+    game.append(introContainer);
+    let introLoop;
+    introLoop = setInterval(() => {
+        introContainer.innerText = `/${currentText}/`;
+        if (introText.length > 0) {
+            currentText += introText.pop();
         }
         else {
-            clearInterval(introLoop_1);
-            setTimeout(function () {
-                introContainer_1.style.color = "var(--texthidden);";
-                setTimeout(function () {
-                    introContainer_1.remove();
-                    start();
+            clearInterval(introLoop);
+            setTimeout(() => {
+                introContainer.style.color = "var(--texthidden);";
+                setTimeout(() => {
+                    introContainer.remove();
+                    start(null);
                 }, 500);
             }, 1000);
         }
     }, 100);
 }
 else {
-    start();
+    start(null);
 }
-var curLevelId = 'intro';
-var curLevel = null;
-var curEntries = [];
-var curTargets = [];
+let curLevelId = 'intro';
+let curLevel = levelData.get(curLevelId);
+let curEntries = [];
+let curTargets = [];
 function resetData(save) {
     gameData = JSON.parse(JSON.stringify(defaultData));
     curLevelId = 'intro';
     curLevel = null;
     curEntries = [];
-    curTargets.forEach(function (t) { return t.remove(); });
+    curTargets.forEach(t => t.remove());
     curTargets = [];
     gameData.completedSet = new Set();
     showLevelInfo('intro');
     if (save) {
         saveData();
     }
-    start();
+    start(null);
 }
 function spanifyAndCheck() {
-    var isAllComplete = true;
-    for (var _i = 0, curTargets_1 = curTargets; _i < curTargets_1.length; _i++) {
-        var target = curTargets_1[_i];
-        var matchIndices = regexToIndices(curLevel.matchregex, curLevel.matchregexflags, target.innerText, curLevel.includeGroups);
-        var isComplete = curEntries.length > 0;
-        var spans = [];
-        for (var _a = 0, curEntries_1 = curEntries; _a < curEntries_1.length; _a++) {
-            var _b = curEntries_1[_a], regex = _b[0], flags = _b[1];
-            var indices = regexToIndices(regex.innerText, flags.innerText, target.innerText, curLevel.checkgroups);
+    let isAllComplete = true;
+    for (const target of curTargets) {
+        let matchIndices = regexToIndices(curLevel.matchregex, curLevel.matchregexflags, target.innerText, curLevel.checkgroups);
+        let isComplete = curEntries.length > 0;
+        let spans = [];
+        for (const [regex, flags] of curEntries) {
+            let indices = regexToIndices(regex.innerText, flags.innerText, target.innerText, curLevel.checkgroups);
             isComplete = isComplete && (JSON.stringify(indices) === JSON.stringify(matchIndices));
-            spans.push.apply(spans, indicesToSpans(indices, 'at'));
+            spans.push(...indicesToSpans(indices, 'at'));
         }
-        spans.push.apply(spans, indicesToSpans(matchIndices, 'ht'));
+        spans.push(...indicesToSpans(matchIndices, 'ht'));
         target.innerHTML = overlapSpan(target.innerText, spans);
         if (isComplete) {
             target.classList.add('died');
@@ -168,7 +151,7 @@ function spanifyAndCheck() {
             saveData();
         }
         game.classList.add('fadeout');
-        setTimeout(function () {
+        setTimeout(() => {
             game.classList.remove('fadeout');
             updateMenuLevels();
             startNextLevel();
@@ -176,20 +159,18 @@ function spanifyAndCheck() {
     }
 }
 function indicesToSpans(indices, className) {
-    var result = [];
-    for (var _i = 0, indices_1 = indices; _i < indices_1.length; _i++) {
-        var outer = indices_1[_i];
-        for (var _a = 0, outer_1 = outer; _a < outer_1.length; _a++) {
-            var inner = outer_1[_a];
-            result.push(__spreadArray([className], inner, true));
+    let result = [];
+    for (const outer of indices) {
+        for (const inner of outer) {
+            result.push([className, ...inner]);
         }
     }
     return result;
 }
 function start(level) {
-    if (level === undefined) {
-        while (levelData[curLevelId].next !== null) {
-            var next = levelData[curLevelId].next;
+    if (level === undefined || level === null) {
+        while (levelData.get(curLevelId).next !== null) {
+            let next = levelData.get(curLevelId).next;
             if (gameData.completedSet.has(curLevelId)) {
                 curLevelId = next;
             }
@@ -201,26 +182,25 @@ function start(level) {
     else {
         curLevelId = level;
     }
-    curLevel = levelData[curLevelId];
+    curLevel = levelData.get(curLevelId);
     rightCol.querySelector('.leveltext').innerHTML = curLevel.leveltext;
     rightCol.classList.remove('closed');
     bottomPane.classList.remove('closed');
-    curTargets.forEach(function (t) { return t.remove(); });
+    curTargets.forEach(t => t.remove());
     regexEntry.innerHTML = '';
     subEntry.innerHTML = '';
     curTargets = [];
-    for (var _i = 0, _a = Array.from(curLevel.dynamictargets.sort(function () { return Math.random() - 0.5; }).entries()); _i < _a.length; _i++) {
-        var _b = _a[_i], index = _b[0], target = _b[1];
-        newTarget = document.createElement('p');
+    for (const [index, target] of Array.from(curLevel.dynamictargets.entries())) {
+        let newTarget = document.createElement('p');
         newTarget.className = 'target scroller';
-        newTarget.style = "top: ".concat(index, "em; animation-delay: -").concat(Math.random() * 30, "s;");
+        newTarget.style.top = `${index}em`;
+        newTarget.style.animationDelay = `-${Math.random() * 30}s`;
         newTarget.innerText = target;
         curTargets.push(newTarget);
         game.append(newTarget);
     }
-    for (var _c = 0, _d = curLevel.statictargets; _c < _d.length; _c++) {
-        var target = _d[_c];
-        newTarget = document.createElement('p');
+    for (const target of curLevel.statictargets) {
+        let newTarget = document.createElement('p');
         newTarget.className = 'target';
         newTarget.innerText = target;
         curTargets.push(newTarget);
@@ -228,18 +208,18 @@ function start(level) {
     }
     curEntries = [];
     spanifyAndCheck();
-    for (var i = 0; i < curLevel.entries; i += 1) {
+    for (let i = 0; i < curLevel.entries; i += 1) {
         addRegexEntry(regexEntry);
     }
-    navNext.onclick = function () { };
-    navPrev.onclick = function () { };
+    navNext.onclick = () => { };
+    navPrev.onclick = () => { };
     if (curLevelId === 'end') {
         navNext.classList.add('inactive');
-        setTimeout(function () { openMenu(); }, 3500);
+        setTimeout(() => { openMenu(); }, 3500);
     }
     else {
         if (gameData.completedSet.has(curLevelId)) {
-            navNext.onclick = function () { start(curLevel.next); };
+            navNext.onclick = () => { start(curLevel.next); };
             navNext.classList.remove('inactive');
         }
         else {
@@ -250,7 +230,7 @@ function start(level) {
         navPrev.classList.add('inactive');
     }
     else {
-        navPrev.onclick = function () { start(curLevel.prev); };
+        navPrev.onclick = () => { start(curLevel.prev); };
         navPrev.classList.remove('inactive');
     }
     updateMenuLevels();
@@ -265,13 +245,13 @@ function startNextLevel() {
     }
 }
 function addRegexEntry(regexEntry) {
-    var newRegexInput = document.createElement('span');
-    var newFlagInput = document.createElement('span');
-    var newP = document.createElement('p');
+    let newRegexInput = document.createElement('span');
+    let newFlagInput = document.createElement('span');
+    let newP = document.createElement('p');
     newRegexInput.className = 'regex-input';
-    newRegexInput.contentEditable = true;
+    newRegexInput.contentEditable = "true";
     newFlagInput.className = 'flag-input';
-    newFlagInput.contentEditable = true;
+    newFlagInput.contentEditable = "true";
     newP.className = 'regex-entry';
     newP.append('/', newRegexInput, '/');
     if (curLevelId === 'intro') {
@@ -301,9 +281,9 @@ function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
     if (!regexFlags.includes('g') && curLevel.hideflags) {
         regexFlags += 'g';
     }
-    var indices = [];
-    var regex = new RegExp(regexString, regexFlags);
-    var lastLastIndex = null;
+    let indices = [];
+    let regex = new RegExp(regexString, regexFlags);
+    let lastLastIndex = null;
     do {
         lastLastIndex = regex.lastIndex;
         indices.push(regex.exec(matchString));
@@ -311,16 +291,16 @@ function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
         && regex.lastIndex !== matchString.length
         && regex.lastIndex !== lastLastIndex);
     //indices.pop()
-    indices = indices.filter(function (i) { return i !== null; });
+    indices = indices.filter(i => i !== null);
     if (!includeGroups) {
-        return indices.map(function (i) { return [__spreadArray([], i.indices[0], true)]; });
+        return indices.map(i => [[...i.indices[0]]]);
     }
     else {
-        return indices.map(function (i) { return __spreadArray([], i.indices, true); });
+        return indices.map(i => [...i.indices]);
     }
 }
-var menuOpen = false;
-var menuDebounce = false;
+let menuOpen = false;
+let menuDebounce = false;
 function handleKey(e) {
     if (!menuDebounce) {
         switch (e.code) {
@@ -331,7 +311,7 @@ function handleKey(e) {
         }
     }
 }
-navMap.onclick = function () { toggleMenu(); };
+navMap.onclick = () => { toggleMenu(); };
 function handleEntry(e) {
     if (!menuOpen) {
         document.activeElement.blur();
@@ -347,7 +327,7 @@ function toggleMenu() {
         else {
             openMenu();
         }
-        setTimeout(function () { return menuDebounce = false; }, 1000);
+        setTimeout(() => menuDebounce = false, 1000);
     }
 }
 function openMenu() {
@@ -358,36 +338,35 @@ function closeMenu() {
     menuOpen = false;
     menu.classList.remove('open');
 }
-var curX = 0;
-var curY = 0;
-var zoomLevel = 1;
-var startPos = { x: -1, y: -1 };
-var lastPos = { x: -1, y: -1 };
-var moving = false;
-var changedPos = function (x, y) { return !(startPos.x === x && startPos.y === y); };
+let curX = 0;
+let curY = 0;
+let zoomLevel = 1;
+let startPos = { x: -1, y: -1 };
+let lastPos = { x: -1, y: -1 };
+let moving = false;
+let changedPos = (x, y) => !(startPos.x === x && startPos.y === y);
 function showLevelInfo(key) {
-    var levelName = levelData[key].name;
-    var topics = levelData[key].addref.map(function (ref) {
-        return "<span class=\"code\">".concat(ref[0], "</span> - <span class=\"code\">").concat(ref[1], "</span>");
+    let levelName = levelData.get(key).name;
+    let topics = levelData.get(key).addref.map((ref) => {
+        return `<span class="code">${ref[0]}</span> - <span class="code">${ref[1]}</span>`;
     });
     menuLevelStart.classList.remove('inactive');
-    menuLevelStart.onmouseup = function (ev) {
+    menuLevelStart.onmouseup = (ev) => {
         start(key);
         closeMenu();
         menuDebounce = true;
-        setTimeout(function () { return menuDebounce = false; }, 1000);
+        setTimeout(() => menuDebounce = false, 1000);
     };
-    menuLevelText.innerHTML = "<h3>".concat(levelName, "</h3><h4>Covered topics:</h4>").concat(topics.join('<br/>'));
+    menuLevelText.innerHTML = `<h3>${levelName}</h3><h4>Covered topics:</h4>${topics.join('<br/>')}`;
 }
 function focusLevels(levels) {
-    var totX = 0;
-    var totY = 0;
-    for (var _i = 0, levels_1 = levels; _i < levels_1.length; _i++) {
-        var levelKey = levels_1[_i];
-        var level = levelData[levelKey];
-        var mapdata = level.mapdata;
-        totX += mapdata.x;
-        totY += mapdata.y;
+    let totX = 0;
+    let totY = 0;
+    for (const levelKey of levels) {
+        let level = levelData.get(levelKey);
+        let mapdata = level.mapdata;
+        totX += mapdata.pos.x;
+        totY += mapdata.pos.y;
     }
     totX /= levels.length;
     totY /= levels.length;
@@ -408,8 +387,8 @@ function endDrag() {
 }
 function moveDrag(ev) {
     if (moving) {
-        var deltaX = ev.x - lastPos.x;
-        var deltaY = ev.y - lastPos.y;
+        let deltaX = ev.x - lastPos.x;
+        let deltaY = ev.y - lastPos.y;
         curX += deltaX;
         curY += deltaY;
         updateView();
@@ -418,9 +397,9 @@ function moveDrag(ev) {
     }
 }
 function updateView() {
-    menuView.style.transform = "translate(50%, 50%) translate(".concat(curX, "px, ").concat(curY, "px) scale(").concat(zoomLevel, ")");
+    menuView.style.transform = `translate(50%, 50%) translate(${curX}px, ${curY}px) scale(${zoomLevel})`;
 }
-menuRight.addEventListener('wheel', function (ev) {
+menuRight.addEventListener('wheel', (ev) => {
     ev.preventDefault();
     zoomLevel += ev.deltaY * -0.0006;
     updateView();
@@ -428,45 +407,45 @@ menuRight.addEventListener('wheel', function (ev) {
 document.addEventListener('mousemove', moveDrag);
 menuRight.addEventListener('mousedown', startDrag);
 document.addEventListener('mouseup', endDrag);
-var levelMap = new Map();
-var lineMap = new Map();
+let levelMap = new Map();
+let lineMap = new Map();
 void function createMenuLevels() {
     menuView.innerHTML = '';
-    for (var _i = 0, _a = Object.entries(levelData); _i < _a.length; _i++) {
-        var _b = _a[_i], key = _b[0], level = _b[1];
+    for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {
             continue;
         }
         if (level.prev !== null) {
-            var line = makeMenuLine(level.mapdata, levelData[level.prev].mapdata);
+            let line = makeMenuLine(level.mapdata.pos, levelData.get(level.prev).mapdata.pos);
             lineMap.set(key, line);
             menuView.append(line);
         }
     }
-    for (var _c = 0, _d = Object.entries(levelData); _c < _d.length; _c++) {
-        var _e = _d[_c], key = _e[0], level = _e[1];
+    for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {
             continue;
         }
-        var levelButton = document.createElement('button');
+        let levelButton = document.createElement('button');
         levelButton.className = 'level';
-        levelButton.style = "top: ".concat(level.mapdata.y, "px; left: ").concat(level.mapdata.x, "px; transform: translate(-50%, -50%);");
+        levelButton.style.left = `${level.mapdata.pos.x}px`;
+        levelButton.style.top = `${level.mapdata.pos.y}px`;
+        levelButton.style.transform = `translate(-50%, -50%)`;
         levelButton.innerText = level.name;
         levelMap.set(key, levelButton);
         menuView.append(levelButton);
     }
 }();
 function updateMenuLevels() {
-    var _loop_1 = function (key, button) {
-        if (!gameData.completedSet.has(levelData[key].prev)) {
-            if (levelData[key].prev !== null) {
+    for (const [key, button] of Array.from(levelMap.entries())) {
+        if (!gameData.completedSet.has(levelData.get(key).prev)) {
+            if (levelData.get(key).prev !== null) {
                 button.classList.add('inactive');
-                button.onclick = function () { };
-                return "continue";
+                button.onclick = () => { };
+                continue;
             }
         }
         button.classList.remove('inactive');
-        button.onclick = function (ev) {
+        button.onclick = (ev) => {
             if (!changedPos(ev.x, ev.y)) {
                 showLevelInfo(key);
             }
@@ -477,18 +456,13 @@ function updateMenuLevels() {
         else {
             button.classList.remove('highlight');
         }
-    };
-    for (var _i = 0, _a = Array.from(levelMap.entries()); _i < _a.length; _i++) {
-        var _b = _a[_i], key = _b[0], button = _b[1];
-        _loop_1(key, button);
     }
     updateMenuLines();
 }
 function updateMenuLines() {
-    for (var _i = 0, _a = Array.from(lineMap.entries()); _i < _a.length; _i++) {
-        var _b = _a[_i], key = _b[0], line = _b[1];
-        if (!gameData.completedSet.has(levelData[key].prev)) {
-            if (levelData[key].prev !== null) {
+    for (const [key, line] of Array.from(lineMap.entries())) {
+        if (!gameData.completedSet.has(levelData.get(key).prev)) {
+            if (levelData.get(key).prev !== null) {
                 line.classList.add('inactive');
                 continue;
             }
@@ -497,33 +471,32 @@ function updateMenuLines() {
     }
 }
 function makeMenuLine(pos1, pos2) {
-    var line = document.createElement('div');
+    let line = document.createElement('div');
     line.className = 'line';
-    var mid = getMidpoint(pos1, pos2);
-    var angle = getAngle(pos1, pos2);
-    var len = getLength(pos1, pos2);
-    line.style = "transform: translate(-50%, -50%) rotate(".concat(angle, "rad); width: ").concat(len, "px; top: ").concat(mid.y, "px; left: ").concat(mid.x, "px;");
+    let mid = getMidpoint(pos1, pos2);
+    let angle = getAngle(pos1, pos2);
+    let len = getLength(pos1, pos2);
+    line.style.transform = `translate(-50%, -50%) rotate(${angle}rad)`;
+    line.style.width = `${len}px`;
+    line.style.top = `${mid.y}px`;
+    line.style.left = `${mid.x}px`;
     return line;
 }
 function getMidpoint(p1, p2) {
     return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
 }
 function getAngle(p1, p2) {
-    var x = p1.x - p2.x;
-    var y = p1.y - p2.y;
+    let x = p1.x - p2.x;
+    let y = p1.y - p2.y;
     return Math.atan2(y, x);
 }
 function getLength(p1, p2) {
-    return Math.sqrt((Math.pow((p1.x - p2.x), 2)) + (Math.pow((p1.y - p2.y), 2)));
+    return Math.sqrt(((p1.x - p2.x) ** 2) + ((p1.y - p2.y) ** 2));
 }
 //updateMenuLevels()
 menuView.style.transform = 'translate(50%, 50%)';
 document.addEventListener('keyup', handleKey);
-if (isTest) {
-    var tests = document.createElement('script');
-    tests.setAttribute('src', 'tests.js');
-    document.body.append(tests);
-}
-toggleLight.addEventListener('click', function () {
+toggleLight.addEventListener('click', () => {
     document.body.classList.toggle('light');
 });
+export { overlapSpan };

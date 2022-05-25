@@ -1,3 +1,5 @@
+import {levelData} from './levelData.js'
+
 let rightCol = document.getElementById('right-col')
 let leftCol = document.getElementById('left-col')
 let bottomPane = document.getElementById('bottom-pane')
@@ -16,13 +18,6 @@ let toggleLight = document.getElementById('toggle-light')
 
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
 
-Set.prototype.toggle = function(token) {
-    if (!this.delete(token)) {
-        this.add(token)
-        return true
-    }
-    return false
-}
 function overlapSpan(text, spans) {
     let result = ''
     let classes = new Set()
@@ -69,9 +64,10 @@ let gameData =  {
     version: '0',
     completed: [],
     introPlayed: false,
-    currentLevel: 0
+    currentLevel: 0,
+    completedSet: new Set()
 }
-defaultData = gameData
+let defaultData = gameData
 void function loadData() {
     let loadedData = localStorage.getItem('gamedata')
     if (loadedData !== null) {
@@ -103,16 +99,16 @@ if (!gameData.introPlayed) {
                 introContainer.style.color = "var(--texthidden);"
                 setTimeout(()=>{
                     introContainer.remove()
-                    start()
+                    start(null)
                 }, 500)
             }, 1000)
         }
     }, 100)
 } else {
-    start()
+    start(null)
 }
 let curLevelId = 'intro'
-let curLevel = null
+let curLevel = levelData.get(curLevelId)
 let curEntries = []
 let curTargets = []
 function resetData(save) {
@@ -125,12 +121,12 @@ function resetData(save) {
     gameData.completedSet = new Set()
     showLevelInfo('intro')
     if (save) {saveData()}
-    start()
+    start(null)
 }
 function spanifyAndCheck() {
     let isAllComplete = true
     for (const target of curTargets) {
-        let matchIndices = regexToIndices(curLevel.matchregex, curLevel.matchregexflags, target.innerText, curLevel.includeGroups)
+        let matchIndices = regexToIndices(curLevel.matchregex, curLevel.matchregexflags, target.innerText, curLevel.checkgroups)
         let isComplete = curEntries.length > 0
         let spans = []
         for (const [regex, flags] of curEntries) {
@@ -170,9 +166,9 @@ function indicesToSpans(indices, className) {
     return result
 }
 function start(level) {
-    if (level === undefined) {
-        while (levelData[curLevelId].next !== null) {
-            let next = levelData[curLevelId].next
+    if (level === undefined || level === null) {
+        while (levelData.get(curLevelId).next !== null) {
+            let next = levelData.get(curLevelId).next
             if (gameData.completedSet.has(curLevelId)) {
                 curLevelId = next
             } else {
@@ -182,7 +178,7 @@ function start(level) {
     } else {
         curLevelId = level
     }
-    curLevel = levelData[curLevelId]
+    curLevel = levelData.get(curLevelId)
     
     rightCol.querySelector('.leveltext').innerHTML = curLevel.leveltext
     rightCol.classList.remove('closed')
@@ -191,16 +187,17 @@ function start(level) {
     regexEntry.innerHTML = ''
     subEntry.innerHTML = ''
     curTargets = []
-    for (const [index, target] of Array.from(curLevel.dynamictargets.sort(()=>Math.random()-0.5).entries())) {
-        newTarget = document.createElement('p')
+    for (const [index, target] of Array.from(curLevel.dynamictargets.entries())) {
+        let newTarget = document.createElement('p')
         newTarget.className = 'target scroller'
-        newTarget.style = `top: ${index}em; animation-delay: -${Math.random() * 30}s;`
+        newTarget.style.top = `${index}em`
+        newTarget.style.animationDelay = `-${Math.random() * 30}s`
         newTarget.innerText = target
         curTargets.push(newTarget)
         game.append(newTarget)
     }
     for (const target of curLevel.statictargets) {
-        newTarget = document.createElement('p')
+        let newTarget = document.createElement('p')
         newTarget.className = 'target'
         newTarget.innerText = target
         curTargets.push(newTarget)
@@ -245,9 +242,9 @@ function addRegexEntry(regexEntry) {
     let newFlagInput = document.createElement('span')
     let newP = document.createElement('p')
     newRegexInput.className = 'regex-input'
-    newRegexInput.contentEditable = true
+    newRegexInput.contentEditable = "true"
     newFlagInput.className = 'flag-input'
-    newFlagInput.contentEditable = true
+    newFlagInput.contentEditable = "true"
     newP.className = 'regex-entry'
     newP.append('/', newRegexInput, '/')
     if (curLevelId === 'intro') {
@@ -301,7 +298,7 @@ function handleKey(e) {
     if (!menuDebounce) {
         switch (e.code) {
             case 'Enter':
-                return document.activeElement.blur()
+                return (document.activeElement as HTMLElement).blur()
             //case 'KeyJ':
             //    return toggleMenu()
         }
@@ -310,7 +307,7 @@ function handleKey(e) {
 navMap.onclick = ()=>{toggleMenu()}
 function handleEntry(e) {
     if (!menuOpen) {
-        document.activeElement.blur()
+        (document.activeElement as HTMLElement).blur()
         spanifyAndCheck()
     }
 }
@@ -341,8 +338,8 @@ let lastPos = {x:-1, y:-1}
 let moving = false
 let changedPos = (x,y)=> !(startPos.x===x && startPos.y===y)
 function showLevelInfo(key) {
-    let levelName = levelData[key].name
-    let topics = levelData[key].addref.map((ref)=>{
+    let levelName = levelData.get(key).name
+    let topics = levelData.get(key).addref.map((ref)=>{
         return `<span class="code">${ref[0]}</span> - <span class="code">${ref[1]}</span>`
     })
     menuLevelStart.classList.remove('inactive')
@@ -358,10 +355,10 @@ function focusLevels(levels) {
     let totX = 0
     let totY = 0
     for (const levelKey of levels) {
-        let level = levelData[levelKey]
+        let level = levelData.get(levelKey)
         let mapdata = level.mapdata
-        totX += mapdata.x
-        totY += mapdata.y
+        totX += mapdata.pos.x
+        totY += mapdata.pos.y
     }
     totX /= levels.length
     totY /= levels.length
@@ -406,19 +403,21 @@ let levelMap = new Map()
 let lineMap = new Map()
 void function createMenuLevels() {
     menuView.innerHTML = ''
-    for (const [key, level] of Object.entries(levelData)) {
+    for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {continue}
         if (level.prev !== null) {
-            let line = makeMenuLine(level.mapdata, levelData[level.prev].mapdata)
+            let line = makeMenuLine(level.mapdata.pos, levelData.get(level.prev).mapdata.pos)
             lineMap.set(key, line)
             menuView.append(line)
         }
     }
-    for (const [key, level] of Object.entries(levelData)) {
+    for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {continue}
         let levelButton = document.createElement('button')
         levelButton.className = 'level'
-        levelButton.style = `top: ${level.mapdata.y}px; left: ${level.mapdata.x}px; transform: translate(-50%, -50%);`
+        levelButton.style.left = `${level.mapdata.pos.x}px`
+        levelButton.style.top = `${level.mapdata.pos.y}px`
+        levelButton.style.transform = `translate(-50%, -50%)`
         levelButton.innerText = level.name
         levelMap.set(key, levelButton)
         menuView.append(levelButton)
@@ -426,8 +425,8 @@ void function createMenuLevels() {
 }()
 function updateMenuLevels() {
     for (const [key, button] of Array.from(levelMap.entries())) {
-        if (!gameData.completedSet.has(levelData[key].prev)) {
-            if (levelData[key].prev !== null) {
+        if (!gameData.completedSet.has(levelData.get(key).prev)) {
+            if (levelData.get(key).prev !== null) {
                 button.classList.add('inactive')
                 button.onclick = ()=>{}
                 continue;
@@ -449,8 +448,8 @@ function updateMenuLevels() {
 }
 function updateMenuLines() {
     for (const [key, line] of Array.from(lineMap.entries())) {
-        if (!gameData.completedSet.has(levelData[key].prev)) {
-            if (levelData[key].prev !== null) {
+        if (!gameData.completedSet.has(levelData.get(key).prev)) {
+            if (levelData.get(key).prev !== null) {
                 line.classList.add('inactive')
                 continue;
             }
@@ -464,7 +463,10 @@ function makeMenuLine(pos1, pos2) {
     let mid = getMidpoint(pos1, pos2)
     let angle = getAngle(pos1, pos2)
     let len = getLength(pos1, pos2)
-    line.style = `transform: translate(-50%, -50%) rotate(${angle}rad); width: ${len}px; top: ${mid.y}px; left: ${mid.x}px;`
+    line.style.transform = `translate(-50%, -50%) rotate(${angle}rad)`
+    line.style.width = `${len}px`
+    line.style.top = `${mid.y}px`
+    line.style.left = `${mid.x}px`
     return line
 }
 function getMidpoint(p1, p2) {
@@ -481,11 +483,9 @@ function getLength(p1, p2) {
 //updateMenuLevels()
 menuView.style.transform = 'translate(50%, 50%)'
 document.addEventListener('keyup', handleKey)
-if (isTest) {
-    let tests = document.createElement('script')
-    tests.setAttribute('src', 'tests.js')
-    document.body.append(tests)
-}
+
 toggleLight.addEventListener('click', ()=>{
     document.body.classList.toggle('light')
 })
+
+export {overlapSpan}
