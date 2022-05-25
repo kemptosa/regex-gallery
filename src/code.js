@@ -46,7 +46,7 @@ function overlapSpan(text, spans) {
                 ignore = false
             }
             if (classes.size !== 0) {
-                result += `<span class="${[...classes].join(' ')}">`
+                result += `<span class="${Array.from(classes).join(' ')}">`
             } else {
                 ignore = true
             }
@@ -191,7 +191,7 @@ function start(level) {
     regexEntry.innerHTML = ''
     subEntry.innerHTML = ''
     curTargets = []
-    for (const [index, target] of curLevel.dynamictargets.sort(()=>Math.random()-0.5).entries()) {
+    for (const [index, target] of Array.from(curLevel.dynamictargets.sort(()=>Math.random()-0.5).entries())) {
         newTarget = document.createElement('p')
         newTarget.className = 'target scroller'
         newTarget.style = `top: ${index}em; animation-delay: -${Math.random() * 30}s;`
@@ -425,7 +425,7 @@ void function createMenuLevels() {
     }
 }()
 function updateMenuLevels() {
-    for (const [key, button] of levelMap.entries()) {
+    for (const [key, button] of Array.from(levelMap.entries())) {
         if (!gameData.completedSet.has(levelData[key].prev)) {
             if (levelData[key].prev !== null) {
                 button.classList.add('inactive')
@@ -448,7 +448,7 @@ function updateMenuLevels() {
     updateMenuLines()
 }
 function updateMenuLines() {
-    for (const [key, line] of lineMap.entries()) {
+    for (const [key, line] of Array.from(lineMap.entries())) {
         if (!gameData.completedSet.has(levelData[key].prev)) {
             if (levelData[key].prev !== null) {
                 line.classList.add('inactive')
