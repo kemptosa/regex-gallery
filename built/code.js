@@ -245,7 +245,7 @@ function start(level) {
     updateMenuLevels();
 }
 function getLevel(id) {
-    let level = getLevel(id);
+    let level = levelData.get(id);
     if (level === undefined) {
         throw new ReferenceError(`${id} is not a valid level in levelData`);
     }
