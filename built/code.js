@@ -15,13 +15,6 @@ let navPrev = document.getElementById('prev-nav');
 let navMap = document.getElementById('map-nav');
 let navNext = document.getElementById('next-nav');
 let toggleLight = document.getElementById('toggle-light');
-function buildAppStructure() {
-    let menu = create('div');
-    menu.id = 'menu';
-    let menuLeft = create('div');
-    menuLeft.id = 'menu-left';
-    let meni;
-}
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname);
 function overlapSpan(text, spans) {
     let result = '';
@@ -115,13 +108,13 @@ else {
     start(null);
 }
 let curLevelId = 'intro';
-let curLevel = levelData.get(curLevelId);
+let curLevel = getLevel(curLevelId);
 let curEntries = [];
 let curTargets = [];
 function resetData(save) {
     gameData = JSON.parse(JSON.stringify(defaultData));
     curLevelId = 'intro';
-    curLevel = null;
+    curLevel = getLevel(curLevelId);
     curEntries = [];
     curTargets.forEach(t => t.remove());
     curTargets = [];
@@ -133,6 +126,9 @@ function resetData(save) {
     start(null);
 }
 function spanifyAndCheck() {
+    if (curLevel === undefined) {
+        return;
+    }
     let isAllComplete = true;
     for (const target of curTargets) {
         let matchIndices = regexToIndices(curLevel.matchregex, curLevel.matchregexflags, target.innerText, curLevel.checkgroups);
@@ -176,11 +172,16 @@ function indicesToSpans(indices, className) {
     return result;
 }
 function start(level) {
-    if (level === undefined || level === null) {
-        while (levelData.get(curLevelId).next !== null) {
-            let next = levelData.get(curLevelId).next;
+    if (level === null) {
+        while (getLevel(curLevelId).next !== null) {
+            let next = getLevel(curLevelId).next;
             if (gameData.completedSet.has(curLevelId)) {
-                curLevelId = next;
+                if (next !== null) {
+                    curLevelId = next;
+                }
+                else {
+                    break;
+                }
             }
             else {
                 break;
@@ -190,7 +191,7 @@ function start(level) {
     else {
         curLevelId = level;
     }
-    curLevel = levelData.get(curLevelId);
+    curLevel = getLevel(curLevelId);
     rightCol.querySelector('.leveltext').innerHTML = curLevel.leveltext;
     rightCol.classList.remove('closed');
     bottomPane.classList.remove('closed');
@@ -243,6 +244,13 @@ function start(level) {
     }
     updateMenuLevels();
 }
+function getLevel(id) {
+    let level = getLevel(id);
+    if (level === undefined) {
+        throw new ReferenceError(`${id} is not a valid level in levelData`);
+    }
+    return level;
+}
 function startNextLevel() {
     if (curLevel.next !== null) {
         start(curLevel.next);
@@ -278,6 +286,9 @@ function addRegexEntry(regexEntry) {
 function fixText() {
     this.innerText = this.innerText;
 }
+function notNull(value) {
+    return value !== null;
+}
 function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
     regexFlags = regexFlags.toLowerCase();
     if (!regexFlags) {
@@ -299,12 +310,12 @@ function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
         && regex.lastIndex !== matchString.length
         && regex.lastIndex !== lastLastIndex);
     //indices.pop()
-    indices = indices.filter(i => i !== null);
+    let indicesWithoutNull = indices.filter(notNull);
     if (!includeGroups) {
-        return indices.map(i => [[...i.indices[0]]]);
+        return indicesWithoutNull.map(i => [[...i.indices[0]]]);
     }
     else {
-        return indices.map(i => [...i.indices]);
+        return indicesWithoutNull.map(i => [...i.indices]);
     }
 }
 let menuOpen = false;
@@ -354,8 +365,8 @@ let lastPos = { x: -1, y: -1 };
 let moving = false;
 let changedPos = (x, y) => !(startPos.x === x && startPos.y === y);
 function showLevelInfo(key) {
-    let levelName = levelData.get(key).name;
-    let topics = levelData.get(key).addref.map((ref) => {
+    let levelName = getLevel(key).name;
+    let topics = getLevel(key).addref.map((ref) => {
         return `<span class="code">${ref[0]}</span> - <span class="code">${ref[1]}</span>`;
     });
     menuLevelStart.classList.remove('inactive');
@@ -371,7 +382,7 @@ function focusLevels(levels) {
     let totX = 0;
     let totY = 0;
     for (const levelKey of levels) {
-        let level = levelData.get(levelKey);
+        let level = getLevel(levelKey);
         let mapdata = level.mapdata;
         totX += mapdata.pos.x;
         totY += mapdata.pos.y;
@@ -424,7 +435,7 @@ void function createMenuLevels() {
             continue;
         }
         if (level.prev !== null) {
-            let line = makeMenuLine(level.mapdata.pos, levelData.get(level.prev).mapdata.pos);
+            let line = makeMenuLine(level.mapdata.pos, getLevel(level.prev).mapdata.pos);
             lineMap.set(key, line);
             menuView.append(line);
         }
@@ -444,9 +455,10 @@ void function createMenuLevels() {
     }
 }();
 function updateMenuLevels() {
+    var _a;
     for (const [key, button] of Array.from(levelMap.entries())) {
-        if (!gameData.completedSet.has(levelData.get(key).prev)) {
-            if (levelData.get(key).prev !== null) {
+        if (!gameData.completedSet.has((_a = getLevel(key).prev) !== null && _a !== void 0 ? _a : '')) {
+            if (getLevel(key).prev !== null) {
                 button.classList.add('inactive');
                 button.onclick = () => { };
                 continue;
@@ -468,9 +480,10 @@ function updateMenuLevels() {
     updateMenuLines();
 }
 function updateMenuLines() {
+    var _a;
     for (const [key, line] of Array.from(lineMap.entries())) {
-        if (!gameData.completedSet.has(levelData.get(key).prev)) {
-            if (levelData.get(key).prev !== null) {
+        if (!gameData.completedSet.has((_a = getLevel(key).prev) !== null && _a !== void 0 ? _a : '')) {
+            if (getLevel(key).prev !== null) {
                 line.classList.add('inactive');
                 continue;
             }
