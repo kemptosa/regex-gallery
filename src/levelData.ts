@@ -1,5 +1,6 @@
-const levelData = {
-    intro:{name:'Intro',
+import {Level} from './types.js'
+const levelData = new Map<string, Level>([
+    ['intro',{name:'Intro',
     statictargets:['regex'],
     dynamictargets:[],
     matchregex:'regex',
@@ -12,12 +13,13 @@ const levelData = {
     next:'cats_and_bars',
     prev:null,
     mapdata: {
-        x: 0,
-        y: 0,
+        pos: {
+            x: 0,
+            y: 0
+        },
         visible:true
-    }
-    },
-    cats_and_bars:{name:'Cats and Bars',
+    }}],
+    ['cats_and_bars',{name:'Cats and Bars',
     statictargets:['cat', 'bar'],
     dynamictargets:['bat', 'rat',
                     'bar', 'par', 'jar',
@@ -32,12 +34,13 @@ const levelData = {
     next: null,
     prev:'intro',
     mapdata: {
-        x: 90,
-        y: 0,
+        pos: {
+            x: 90,
+            y: 0
+        },
         visible:true
-    }
-    },
-    more_specific_non:{name:'More Specific Non-specificity',
+    }}],
+    ['more_specific_non',{name:'More Specific Non-specificity',
     statictargets:['dab', 'cat', 'cob'],
     dynamictargets:['cab', 'dob', 'cot', 'jot', 'cam', 'dot', 'datum', 'jacob','fab','tob','bob'],
     matchregex:'[dc][oa][tb]',
@@ -50,12 +53,13 @@ const levelData = {
     next:'word_esque',
     prev:'cats_and_bars',
     mapdata: {
-        x: 180,
-        y: 0,
+        pos: {
+            x: 180,
+            y: 0
+        },
         visible:true
-    }
-    },
-    word_esque:{name:'Word-esque',
+    }}],
+    ['word_esque',{name:'Word-esque',
     statictargets:['%##@', 'Rita', 'pack', 'rend'],
     dynamictargets:['%a%a', '&how', 'helm', 'salt', 'then', 'bool'],
     matchregex:'\\w\\w\\w\\w',
@@ -69,12 +73,13 @@ const levelData = {
     next:'beyond_the_boundary',
     prev:'more_specific_non',
     mapdata: {
-        x: 270,
-        y: 0,
+        pos: {
+            x: 270,
+            y: 0
+        },
         visible:true
-    }
-    },
-    an_unknown_quantity_i:{name:'An Unknown Quantity, Part I',
+    }}],
+    ['an_unknown_quantity_i',{name:'An Unknown Quantity, Part I',
     statictargets:['ct scan', 'cat scan', 'emi scan'],
     dynamictargets:['caaaat', 'caaaaaaaaaaaaaaaaaaaat'],
     matchregex:'ca*t',
@@ -87,12 +92,13 @@ const levelData = {
     next:'end',
     prev:'cats_and_bars',
     mapdata: {
-        x: 0,
-        y: 75,
+        pos: {
+            x: 0,
+            y: 75
+        },
         visible:true
-    }
-    },
-    beyond_the_boundary:{name:'Beyond the Boundary',
+    }}],
+    ['beyond_the_boundary',{name:'Beyond the Boundary',
     statictargets:['catfish', 'bobcat', 'catatonic'],
     dynamictargets:['certificate', 'catalonia', 'located', 'cathode'],
     matchregex:'\\bcat',
@@ -106,12 +112,13 @@ const levelData = {
     next:'an_unknown_quantity_i',
     prev:'word_esque',
     mapdata: {
-        x: 180,
-        y: 75,
+        pos: {
+            x: 180,
+            y: 75
+        },
         visible:true
-    }
-    },
-    end:{name:'The End',
+    }}],
+    ['end',{name:'The End',
     statictargets:['THE END', '(of this path)'],
     dynamictargets:[],
     matchregex:'the end',
@@ -124,9 +131,12 @@ const levelData = {
     next:null,
     prev:null,
     mapdata: {
-        x: 180,
-        y: 75,
+        pos: {
+            x: 180,
+            y: 75
+        },
         visible:false
-    }
-    }
-}
+    }}]
+])
+
+export {levelData}

@@ -1,31 +1,29 @@
-let rightCol = document.getElementById('right-col')
-let leftCol = document.getElementById('left-col')
-let bottomPane = document.getElementById('bottom-pane')
-let game = document.getElementById('game')
-let regexEntry = document.getElementById('regex-entry')
-let subEntry = document.getElementById('sub-entry')
-let menu = document.getElementById('menu')
-let menuRight = document.getElementById('menu-right')
-let menuView = document.getElementById('menu-view')
-let menuLevelText = document.getElementById('menu-level-text')
-let menuLevelStart = document.getElementById('level-start-button')
-let navPrev = document.getElementById('prev-nav')
-let navMap = document.getElementById('map-nav')
-let navNext = document.getElementById('next-nav')
-let toggleLight = document.getElementById('toggle-light')
+import {levelData} from './levelData.js'
+import {GameData, Level, Point} from './types.js'
+
+function create(type: string): HTMLElement {return document.createElement(type)}
+
+let rightCol = document.getElementById('right-col')!
+let leftCol = document.getElementById('left-col')!
+let bottomPane = document.getElementById('bottom-pane')!
+let game = document.getElementById('game')!
+let regexEntry = document.getElementById('regex-entry')!
+let subEntry = document.getElementById('sub-entry')!
+let menu = document.getElementById('menu')!
+let menuRight = document.getElementById('menu-right')!
+let menuView = document.getElementById('menu-view')!
+let menuLevelText = document.getElementById('menu-level-text')!
+let menuLevelStart = document.getElementById('level-start-button')!
+let navPrev = document.getElementById('prev-nav')!
+let navMap = document.getElementById('map-nav')!
+let navNext = document.getElementById('next-nav')!
+let toggleLight = document.getElementById('toggle-light')!
 
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
 
-Set.prototype.toggle = function(token) {
-    if (!this.delete(token)) {
-        this.add(token)
-        return true
-    }
-    return false
-}
-function overlapSpan(text, spans) {
+function overlapSpan(text: string, spans: Array<[string, number, number]>): string {
     let result = ''
-    let classes = new Set()
+    let classes = new Set<string>()
     let ignore = true
     for (let i = 0; i < text.length; i += 1) {
         let changed = false
@@ -46,7 +44,7 @@ function overlapSpan(text, spans) {
                 ignore = false
             }
             if (classes.size !== 0) {
-                result += `<span class="${[...classes].join(' ')}">`
+                result += `<span class="${Array.from(classes).join(' ')}">`
             } else {
                 ignore = true
             }
@@ -64,14 +62,14 @@ function overlapSpan(text, spans) {
 //     rightCol.classList.toggle('closed')
 //     bottomPane.classList.toggle('closed')
 // }
-
-let gameData =  {
+let gameData: GameData =  {
     version: '0',
     completed: [],
     introPlayed: false,
-    currentLevel: 0
+    currentLevel: 0,
+    completedSet: new Set()
 }
-defaultData = gameData
+let defaultData = gameData
 void function loadData() {
     let loadedData = localStorage.getItem('gamedata')
     if (loadedData !== null) {
@@ -82,7 +80,7 @@ void function loadData() {
     gameData.completedSet = new Set(gameData.completed)
 }()
 let saveData = function() {
-    gameData.completed = [...gameData.completedSet]
+    gameData.completed = Array.from(gameData.completedSet)
     localStorage.setItem('gamedata', JSON.stringify(gameData))
 }
 if (!gameData.introPlayed) {
@@ -92,7 +90,7 @@ if (!gameData.introPlayed) {
     introContainer.className = 'intro'
     introContainer.innerText = '//'
     game.append(introContainer)
-    let introLoop;
+    let introLoop: number;
     introLoop = setInterval(()=>{
         introContainer.innerText = `/${currentText}/`
         if (introText.length > 0) {
@@ -103,34 +101,35 @@ if (!gameData.introPlayed) {
                 introContainer.style.color = "var(--texthidden);"
                 setTimeout(()=>{
                     introContainer.remove()
-                    start()
+                    start(null)
                 }, 500)
             }, 1000)
         }
     }, 100)
 } else {
-    start()
+    start(null)
 }
 let curLevelId = 'intro'
-let curLevel = null
-let curEntries = []
-let curTargets = []
-function resetData(save) {
+let curLevel = getLevel(curLevelId)
+let curEntries: Array<[HTMLElement, HTMLElement]> = []
+let curTargets: HTMLElement[] = []
+function resetData(save: boolean) {
     gameData = JSON.parse(JSON.stringify(defaultData))
     curLevelId = 'intro'
-    curLevel = null
+    curLevel = getLevel(curLevelId)
     curEntries = []
     curTargets.forEach(t=>t.remove())
     curTargets = []
     gameData.completedSet = new Set()
     showLevelInfo('intro')
     if (save) {saveData()}
-    start()
+    start(null)
 }
 function spanifyAndCheck() {
+    if (curLevel === undefined) {return}
     let isAllComplete = true
     for (const target of curTargets) {
-        let matchIndices = regexToIndices(curLevel.matchregex, curLevel.matchregexflags, target.innerText, curLevel.includeGroups)
+        let matchIndices = regexToIndices(curLevel.matchregex, curLevel.matchregexflags, target.innerText, curLevel.checkgroups)
         let isComplete = curEntries.length > 0
         let spans = []
         for (const [regex, flags] of curEntries) {
@@ -160,21 +159,25 @@ function spanifyAndCheck() {
         }, 1000)
     }
 }
-function indicesToSpans(indices, className) {
+function indicesToSpans(indices: number[][][], className: string) {
     let result = []
     for (const outer of indices) {
         for (const inner of outer) {
-            result.push([className, ...inner])
+            result.push(([className, ...inner]) as [string, number, number])
         }
     }
     return result
 }
-function start(level) {
-    if (level === undefined) {
-        while (levelData[curLevelId].next !== null) {
-            let next = levelData[curLevelId].next
+function start(level: string | null) {
+    if (level === null) {
+        while (getLevel(curLevelId).next !== null) {
+            let next = getLevel(curLevelId).next
             if (gameData.completedSet.has(curLevelId)) {
-                curLevelId = next
+                if (next !== null) {
+                    curLevelId = next
+                } else {
+                    break
+                }
             } else {
                 break
             }
@@ -182,25 +185,26 @@ function start(level) {
     } else {
         curLevelId = level
     }
-    curLevel = levelData[curLevelId]
+    curLevel = getLevel(curLevelId)
     
-    rightCol.querySelector('.leveltext').innerHTML = curLevel.leveltext
+    rightCol.querySelector('.leveltext')!.innerHTML = curLevel.leveltext
     rightCol.classList.remove('closed')
     bottomPane.classList.remove('closed')
     curTargets.forEach(t=>t.remove())
     regexEntry.innerHTML = ''
     subEntry.innerHTML = ''
     curTargets = []
-    for (const [index, target] of curLevel.dynamictargets.sort(()=>Math.random()-0.5).entries()) {
-        newTarget = document.createElement('p')
+    for (const [index, target] of Array.from(curLevel.dynamictargets.entries())) {
+        let newTarget = document.createElement('p')
         newTarget.className = 'target scroller'
-        newTarget.style = `top: ${index}em; animation-delay: -${Math.random() * 30}s;`
+        newTarget.style.top = `${index}em`
+        newTarget.style.animationDelay = `-${Math.random() * 30}s`
         newTarget.innerText = target
         curTargets.push(newTarget)
         game.append(newTarget)
     }
     for (const target of curLevel.statictargets) {
-        newTarget = document.createElement('p')
+        let newTarget = document.createElement('p')
         newTarget.className = 'target'
         newTarget.innerText = target
         curTargets.push(newTarget)
@@ -232,6 +236,13 @@ function start(level) {
     }
     updateMenuLevels()
 }
+function getLevel(id: string): Level {
+    let level = getLevel(id)
+    if (level === undefined) {
+        throw new ReferenceError(`${id} is not a valid level in levelData`)
+    }
+    return level
+}
 function startNextLevel() {
     if (curLevel.next !== null) {
         start(curLevel.next)
@@ -240,14 +251,14 @@ function startNextLevel() {
         focusLevels([curLevelId])
     }
 }
-function addRegexEntry(regexEntry) {
+function addRegexEntry(regexEntry: HTMLElement) {
     let newRegexInput = document.createElement('span')
     let newFlagInput = document.createElement('span')
     let newP = document.createElement('p')
     newRegexInput.className = 'regex-input'
-    newRegexInput.contentEditable = true
+    newRegexInput.contentEditable = "true"
     newFlagInput.className = 'flag-input'
-    newFlagInput.contentEditable = true
+    newFlagInput.contentEditable = "true"
     newP.className = 'regex-entry'
     newP.append('/', newRegexInput, '/')
     if (curLevelId === 'intro') {
@@ -263,10 +274,14 @@ function addRegexEntry(regexEntry) {
     curEntries.push([newRegexInput, newFlagInput])
     regexEntry.append(newP)
 }
-function fixText() {
+function fixText(this: HTMLElement) {
     this.innerText = this.innerText
 }
-function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
+function notNull<T>(value: T | null): value is T {
+    return value !== null;
+}
+type RegExpMatchArrayWithIndices = RegExpMatchArray & { indices: Array<[number, number]> };
+function regexToIndices(regexString: string, regexFlags: string, matchString: string, includeGroups: boolean) {
     regexFlags = regexFlags.toLowerCase()
     if (!regexFlags) {
         regexFlags = ""
@@ -277,9 +292,9 @@ function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
     if (!regexFlags.includes('g') && curLevel.hideflags) {
         regexFlags += 'g'
     }
-    let indices = []
+    let indices: (RegExpExecArray | null)[] = []
     let regex = new RegExp(regexString, regexFlags)
-    let lastLastIndex = null
+    let lastLastIndex: number | null = null
     do {
         lastLastIndex = regex.lastIndex
         indices.push(regex.exec(matchString))
@@ -287,30 +302,30 @@ function regexToIndices(regexString, regexFlags, matchString, includeGroups) {
         && regex.lastIndex !== matchString.length
         && regex.lastIndex !== lastLastIndex)
     //indices.pop()
-    indices = indices.filter(i=>i!==null)
+    let indicesWithoutNull: RegExpExecArray[] = indices.filter(notNull)
     if (!includeGroups) {
-        return indices.map(i=>[[...i.indices[0]]])
+        return indicesWithoutNull.map(i=>[[...(i as RegExpMatchArrayWithIndices).indices[0]]])
     } else {
-        return indices.map(i=>[...i.indices])
+        return indicesWithoutNull.map(i=>[...(i as RegExpMatchArrayWithIndices).indices])
     }
     
 }
 let menuOpen = false
 let menuDebounce = false
-function handleKey(e) {
+function handleKey(e: KeyboardEvent) {
     if (!menuDebounce) {
         switch (e.code) {
             case 'Enter':
-                return document.activeElement.blur()
+                return (document.activeElement as HTMLElement).blur()
             //case 'KeyJ':
             //    return toggleMenu()
         }
     }
 }
 navMap.onclick = ()=>{toggleMenu()}
-function handleEntry(e) {
+function handleEntry() {
     if (!menuOpen) {
-        document.activeElement.blur()
+        (document.activeElement as HTMLElement).blur()
         spanifyAndCheck()
     }
 }
@@ -336,17 +351,17 @@ function closeMenu() {
 let curX = 0
 let curY = 0
 let zoomLevel = 1
-let startPos = {x:-1, y:-1}
-let lastPos = {x:-1, y:-1}
+let startPos: Point = {x:-1, y:-1}
+let lastPos: Point = {x:-1, y:-1}
 let moving = false
-let changedPos = (x,y)=> !(startPos.x===x && startPos.y===y)
-function showLevelInfo(key) {
-    let levelName = levelData[key].name
-    let topics = levelData[key].addref.map((ref)=>{
+let changedPos = (x: number,y: number)=> !(startPos.x===x && startPos.y===y)
+function showLevelInfo(key: string) {
+    let levelName = getLevel(key).name
+    let topics = getLevel(key).addref.map((ref)=>{
         return `<span class="code">${ref[0]}</span> - <span class="code">${ref[1]}</span>`
     })
     menuLevelStart.classList.remove('inactive')
-    menuLevelStart.onmouseup = (ev) => {
+    menuLevelStart.onmouseup = () => {
         start(key)
         closeMenu()
         menuDebounce = true
@@ -354,14 +369,14 @@ function showLevelInfo(key) {
     }
     menuLevelText.innerHTML = `<h3>${levelName}</h3><h4>Covered topics:</h4>${topics.join('<br/>')}`
 }
-function focusLevels(levels) {
+function focusLevels(levels: string[]) {
     let totX = 0
     let totY = 0
     for (const levelKey of levels) {
-        let level = levelData[levelKey]
+        let level = getLevel(levelKey)
         let mapdata = level.mapdata
-        totX += mapdata.x
-        totY += mapdata.y
+        totX += mapdata.pos.x
+        totY += mapdata.pos.y
     }
     totX /= levels.length
     totY /= levels.length
@@ -370,7 +385,7 @@ function focusLevels(levels) {
     zoomLevel = 1
     updateView()
 }
-function startDrag(ev) {
+function startDrag(ev: MouseEvent) {
     lastPos.x = ev.x
     lastPos.y = ev.y
     startPos.x = ev.x
@@ -380,7 +395,7 @@ function startDrag(ev) {
 function endDrag() {
     moving = false
 }
-function moveDrag(ev) {
+function moveDrag(ev: MouseEvent) {
     if (moving) {
         let deltaX = ev.x - lastPos.x
         let deltaY = ev.y - lastPos.y
@@ -402,39 +417,41 @@ menuRight.addEventListener('wheel', (ev)=>{
 document.addEventListener('mousemove', moveDrag)
 menuRight.addEventListener('mousedown', startDrag)
 document.addEventListener('mouseup', endDrag)
-let levelMap = new Map()
-let lineMap = new Map()
+let levelMap = new Map<string, HTMLElement>()
+let lineMap = new Map<string, HTMLElement>()
 void function createMenuLevels() {
     menuView.innerHTML = ''
-    for (const [key, level] of Object.entries(levelData)) {
+    for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {continue}
         if (level.prev !== null) {
-            let line = makeMenuLine(level.mapdata, levelData[level.prev].mapdata)
+            let line = makeMenuLine(level.mapdata.pos, getLevel(level.prev).mapdata.pos)
             lineMap.set(key, line)
             menuView.append(line)
         }
     }
-    for (const [key, level] of Object.entries(levelData)) {
+    for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {continue}
         let levelButton = document.createElement('button')
         levelButton.className = 'level'
-        levelButton.style = `top: ${level.mapdata.y}px; left: ${level.mapdata.x}px; transform: translate(-50%, -50%);`
+        levelButton.style.left = `${level.mapdata.pos.x}px`
+        levelButton.style.top = `${level.mapdata.pos.y}px`
+        levelButton.style.transform = `translate(-50%, -50%)`
         levelButton.innerText = level.name
         levelMap.set(key, levelButton)
         menuView.append(levelButton)
     }
 }()
 function updateMenuLevels() {
-    for (const [key, button] of levelMap.entries()) {
-        if (!gameData.completedSet.has(levelData[key].prev)) {
-            if (levelData[key].prev !== null) {
+    for (const [key, button] of Array.from(levelMap.entries())) {
+        if (!gameData.completedSet.has(getLevel(key).prev??'')) {
+            if (getLevel(key).prev !== null) {
                 button.classList.add('inactive')
                 button.onclick = ()=>{}
                 continue;
             }
         }
         button.classList.remove('inactive')
-        button.onclick = (ev)=>{
+        button.onclick = (ev: MouseEvent)=>{
             if (!changedPos(ev.x, ev.y)) {
                 showLevelInfo(key)
             }
@@ -448,9 +465,9 @@ function updateMenuLevels() {
     updateMenuLines()
 }
 function updateMenuLines() {
-    for (const [key, line] of lineMap.entries()) {
-        if (!gameData.completedSet.has(levelData[key].prev)) {
-            if (levelData[key].prev !== null) {
+    for (const [key, line] of Array.from(lineMap.entries())) {
+        if (!gameData.completedSet.has(getLevel(key).prev??'')) {
+            if (getLevel(key).prev !== null) {
                 line.classList.add('inactive')
                 continue;
             }
@@ -458,34 +475,35 @@ function updateMenuLines() {
         line.classList.remove('inactive')
     }
 }
-function makeMenuLine(pos1, pos2) {
+function makeMenuLine(pos1: Point, pos2: Point) {
     let line = document.createElement('div')
     line.className = 'line'
     let mid = getMidpoint(pos1, pos2)
     let angle = getAngle(pos1, pos2)
     let len = getLength(pos1, pos2)
-    line.style = `transform: translate(-50%, -50%) rotate(${angle}rad); width: ${len}px; top: ${mid.y}px; left: ${mid.x}px;`
+    line.style.transform = `translate(-50%, -50%) rotate(${angle}rad)`
+    line.style.width = `${len}px`
+    line.style.top = `${mid.y}px`
+    line.style.left = `${mid.x}px`
     return line
 }
-function getMidpoint(p1, p2) {
+function getMidpoint(p1: Point, p2: Point) {
     return {x: (p1.x+p2.x)/2, y: (p1.y+p2.y)/2}
 }
-function getAngle(p1, p2) {
+function getAngle(p1: Point, p2: Point) {
     let x = p1.x - p2.x
     let y = p1.y - p2.y
     return Math.atan2(y, x)
 }
-function getLength(p1, p2) {
+function getLength(p1: Point, p2: Point) {
     return Math.sqrt(((p1.x-p2.x)**2) + ((p1.y-p2.y)**2))
 }
 //updateMenuLevels()
 menuView.style.transform = 'translate(50%, 50%)'
 document.addEventListener('keyup', handleKey)
-if (isTest) {
-    let tests = document.createElement('script')
-    tests.setAttribute('src', 'tests.js')
-    document.body.append(tests)
-}
+
 toggleLight.addEventListener('click', ()=>{
     document.body.classList.toggle('light')
 })
+
+export {overlapSpan}
