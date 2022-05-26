@@ -3,7 +3,7 @@ import {overlapSpan} from "./code.js"
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
 
 if (isTest) {
-    function doTest(f, expected) {
+    function doTest(f:(arg0?:any)=>any, expected:any) {
         let result = f()
         if (result === expected) {
             console.log(`test returned ${expected}, as expected`)

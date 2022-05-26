@@ -1,4 +1,5 @@
 import { levelData } from './levelData.js';
+function create(type) { return document.createElement(type); }
 let rightCol = document.getElementById('right-col');
 let leftCol = document.getElementById('left-col');
 let bottomPane = document.getElementById('bottom-pane');
@@ -14,6 +15,13 @@ let navPrev = document.getElementById('prev-nav');
 let navMap = document.getElementById('map-nav');
 let navNext = document.getElementById('next-nav');
 let toggleLight = document.getElementById('toggle-light');
+function buildAppStructure() {
+    let menu = create('div');
+    menu.id = 'menu';
+    let menuLeft = create('div');
+    menuLeft.id = 'menu-left';
+    let meni;
+}
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname);
 function overlapSpan(text, spans) {
     let result = '';
@@ -75,7 +83,7 @@ void function loadData() {
     gameData.completedSet = new Set(gameData.completed);
 }();
 let saveData = function () {
-    gameData.completed = [...gameData.completedSet];
+    gameData.completed = Array.from(gameData.completedSet);
     localStorage.setItem('gamedata', JSON.stringify(gameData));
 };
 if (!gameData.introPlayed) {
@@ -162,7 +170,7 @@ function indicesToSpans(indices, className) {
     let result = [];
     for (const outer of indices) {
         for (const inner of outer) {
-            result.push([className, ...inner]);
+            result.push(([className, ...inner]));
         }
     }
     return result;
@@ -312,7 +320,7 @@ function handleKey(e) {
     }
 }
 navMap.onclick = () => { toggleMenu(); };
-function handleEntry(e) {
+function handleEntry() {
     if (!menuOpen) {
         document.activeElement.blur();
         spanifyAndCheck();
@@ -351,7 +359,7 @@ function showLevelInfo(key) {
         return `<span class="code">${ref[0]}</span> - <span class="code">${ref[1]}</span>`;
     });
     menuLevelStart.classList.remove('inactive');
-    menuLevelStart.onmouseup = (ev) => {
+    menuLevelStart.onmouseup = () => {
         start(key);
         closeMenu();
         menuDebounce = true;

@@ -17,7 +17,14 @@ export interface Level {
     hideflags: boolean,
     leveltext: string,
     addref: string[][],
-    next: string,
-    prev: string,
+    next: string | null,
+    prev: string | null,
     mapdata: MapData
+}
+export interface GameData {
+    version: string
+    completed: string[],
+    introPlayed: boolean,
+    currentLevel: number,
+    completedSet: Set<string>
 }
