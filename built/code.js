@@ -16,6 +16,7 @@ let navMap = document.getElementById('map-nav');
 let navNext = document.getElementById('next-nav');
 let toggleLight = document.getElementById('toggle-light');
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname);
+isTest = false;
 function overlapSpan(text, spans) {
     let result = '';
     let classes = new Set();
@@ -173,19 +174,15 @@ function indicesToSpans(indices, className) {
 }
 function start(level) {
     if (level === null) {
-        while (getLevel(curLevelId).next !== null) {
-            let next = getLevel(curLevelId).next;
-            if (gameData.completedSet.has(curLevelId)) {
-                if (next !== null) {
-                    curLevelId = next;
-                }
-                else {
-                    break;
-                }
-            }
-            else {
-                break;
-            }
+        let temp = Array.from(gameData.completedSet).pop();
+        if (temp === undefined) {
+            curLevelId = 'intro';
+        }
+        else {
+            curLevelId = temp;
+            curLevel = getLevel(curLevelId);
+            updateMenuLevels();
+            return startNextLevel();
         }
     }
     else {
