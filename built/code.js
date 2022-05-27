@@ -19,6 +19,8 @@ let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname);
 isTest = false;
 function overlapSpan(text, spans) {
     let result = '';
+    text = text.replace(/</g, '◀');
+    text = text.replace(/</g, '▶');
     let classes = new Set();
     let ignore = true;
     for (let i = 0; i < text.length; i += 1) {
@@ -52,6 +54,8 @@ function overlapSpan(text, spans) {
     if (classes.size > 0) {
         result += '</span>';
     }
+    result = result.replace(/◀/, '&lt;');
+    result = result.replace(/▶/, '&gt;');
     return result;
 }
 // document.getElementById('right-col-toggle').onclick = function() {

@@ -89,12 +89,31 @@ const levelData = new Map<string, Level>([
     hideflags:true,
     leveltext:'Up to this point, we have only dealt with matching text of a specific length, but what if you dont know the exact length? For example, you might be trying to parse some robotically scanned text of a book where there are occasionally double spaces in the text. The following levels will deal with modifiers that can make a regular expression match text of variable length.<br/><br/>First up: <span class="code">*</span>. This modifier applies to the token directly preceding it and means \'zero or more\'. A token in this case does not necessarily mean a single character in your regular expression; <span class="code">\\w</span>, <span class="code">[abc]</span>, and <span class="code">(?:abc)</span> are all examples of singlular tokens. (That last one is called a \'non-capturing group\' and will be covered later.)',
     addref:[['*', '0 or more']],
-    next:'end',
+    next:'an_unknown_quantity_ii',
     prev:'cats_and_bars',
     mapdata: {
         pos: {
             x: 0,
             y: 75
+        },
+        visible:true
+    }}],
+    ['an_unknown_quantity_ii',{name:'An Unknown Quantity, Part II',
+    statictargets:['<Tarzan>', '<Tarzan', 'Tarzan>', 'Tarzan'],
+    dynamictargets:['<Jane>', '><>', "><>", '><>', "><>"],
+    matchregex:'<?Tarzan>?',
+    matchregexflags:'g',
+    checkgroups:false,
+    entries:1,
+    hideflags:true,
+    leveltext:'',
+    addref:[['?', '0 or 1 (aka optional)']],
+    next:'end',
+    prev:'an_unknown_quantity_i',
+    mapdata: {
+        pos: {
+            x: -90,
+            y: 150
         },
         visible:true
     }}],
