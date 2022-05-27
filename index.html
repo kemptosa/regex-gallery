@@ -14,35 +14,40 @@
     <meta content="#ff8b8b" data-react-helmet="true" name="theme-color" />
 </head>
 <body>
-    <div id='menu'>
-        <div id='menu-left'>
-            <div id='menu-level-text'></div>
-            <button id='level-start-button' class='inactive'>START</button>
+    <div id='app'>
+        <div id='menu'>
+            <div id='menu-left'>
+                <div id='menu-level-text'></div>
+                <button id='level-start-button' class='inactive'>START</button>
+            </div>
+            <div id='menu-right'>
+                <button id='toggle-light'>Toggle light mode</button>
+                <div id="menu-view"></div>
+            </div>
         </div>
-        <div id='menu-right'>
-            <button id='toggle-light'>Toggle light mode</button>
-            <div id="menu-view"></div>
-        </div>
-    </div>
-    <div id='left-col'>
-        <div id='game'></div>
+        <div id='left-col'>
+            <div id='game'></div>
 
-        <div id='bottom-pane' class='closed'>
-            <div id='sub-entry' class='closed'></div>
-            <div id='regex-entry'></div>
+            <div id='bottom-pane' class='closed'>
+                <div id='sub-entry' class='closed'></div>
+                <div id='regex-entry'></div>
+            </div>
         </div>
-    </div>
-    <div id='right-col' class='closed'>
-        <p class='leveltext'></p>
-        <nav class='level-nav'>
-            <button id='prev-nav' class='nav-button'>prev</button>
-            <button id='map-nav' class='nav-button'>levels</button>
-            <button id='next-nav' class='nav-button'>next</button>
-        </nav>
-        <!-- <button id='right-col-toggle' class='col-twisty'><div></div><div></div><div></div></button> -->
+        <div id='right-col' class='closed'>
+            <p class='leveltext'></p>
+            <nav class='level-nav'>
+                <button id='prev-nav' class='nav-button'>prev</button>
+                <button id='map-nav' class='nav-button'>levels</button>
+                <button id='next-nav' class='nav-button'>next</button>
+            </nav>
+            <!-- <button id='right-col-toggle' class='col-twisty'><div></div><div></div><div></div></button> -->
+        </div>
     </div>
     <script type="module" src="built/levelData.js"></script>
     <script type="module" src="built/code.js"></script>
     <script type="module" src="built/tests.js"></script>
+    <footer>
+        <p>Have an issue or suggestion? Open an issue on the <a href="https://github.com/kemptosa/regex-gallery/issues">tracker!</a></p>
+    </footer>
 </body>
 </html>

@@ -7,10 +7,15 @@ body {
     --accent-hover: #3f33aa;
     --accent-disabled: #0f0c2b;
     --text: #e7f6ff;
+    --text-lc: #aaaaaa;
     --highlight: #8b8b8b;
     --texthidden: #e7f6ff00;
     --textdisabled: #6a7780;
     --textred: #ff8b8b;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 body.light {
@@ -22,15 +27,15 @@ body.light {
     --accent-hover: #3f33aa;
     --accent-disabled: #9a95c7;
     --text: #202020;
+    --text-lc: #414141;
     --highlight: #c2c2c2;
     --texthidden: #9c9c9c00;
     --textdisabled: #9da8b1;
     --textred: #684343;
 }
-body {
-    height: 100vh;
-    width: 100vw;
-    margin: 0;
+#app {
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: row;
 }
@@ -48,6 +53,7 @@ body {
     flex: 0.2 0 15rem;
     background-color: var(--background-layer2);
     border-left: 4px solid var(--borders);
+    padding-right: 1rem;
 }
 #right-col.closed {
     flex: 0 0 3rem;
@@ -301,6 +307,21 @@ p.intro {
 .regex-entry {
     font-size: larger;
     align-items: center;
+}
+body > footer {
+    padding: 0.5rem 0;
+    border-top: 4px solid var(--borders);
+    background-color: var(--background);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 2rem;
+}
+footer * {
+    color: var(--text-lc);
+}
+a:visited {
+    color: var(--textdisabled);
 }
 @-webkit-keyframes highlights {
     50% { background-color: var(--highlight) }

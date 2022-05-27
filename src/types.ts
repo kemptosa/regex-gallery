@@ -16,7 +16,7 @@ export interface Level {
     entries: number,
     hideflags: boolean,
     leveltext: string,
-    addref: string[][],
+    addref: [string,string][],
     next: string | null,
     prev: string | null,
     mapdata: MapData

@@ -24,7 +24,7 @@ isTest = false
 function overlapSpan(text: string, spans: Array<[string, number, number]>): string {
     let result = ''
     text = text.replace(/</g, '◀')
-    text = text.replace(/</g, '▶')
+    text = text.replace(/>/g, '▶')
     let classes = new Set<string>()
     let ignore = true
     for (let i = 0; i < text.length; i += 1) {
@@ -57,8 +57,8 @@ function overlapSpan(text: string, spans: Array<[string, number, number]>): stri
     if (classes.size > 0) {
         result += '</span>'
     }
-    result = result.replace(/◀/, '&lt;')
-    result = result.replace(/▶/, '&gt;')
+    result = result.replace(/◀/g, '&lt;')
+    result = result.replace(/▶/g, '&gt;')
     return result
 }
 
