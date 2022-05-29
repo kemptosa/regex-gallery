@@ -101,7 +101,7 @@ body.light {
     z-index: 2;
     background-color: var(--background);
     transition: width 1.2s ease;
-    outline: 8px solid var(--borders);
+    outline: 4px solid var(--borders);
     height: 100%;
     width: 0%;
 }
@@ -160,11 +160,9 @@ body.light {
     flex: 1 0 0;
 }
 #toggle-light {
-    position: absolute;
     color: var(--text);
     background-color: var(--accent);
     border: solid 2px var(--borders);
-    transform: translate(3px, 3px);
 }
 .nav-button {
     margin: 0rem 0.5rem;
@@ -313,9 +311,10 @@ body > footer {
     border-top: 4px solid var(--borders);
     background-color: var(--background);
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    height: 2rem;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    height: 3rem;
 }
 footer * {
     color: var(--text-lc);

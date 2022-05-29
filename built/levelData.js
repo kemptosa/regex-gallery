@@ -61,7 +61,7 @@ const levelData = new Map([
     ['word_esque', { name: 'Word-esque',
             statictargets: ['%##@', 'Rita', 'pack', 'rend'],
             dynamictargets: ['%a%a', '&how', 'helm', 'salt', 'then', 'bool'],
-            matchregex: '\\w\\w\\w\\w',
+            matchregex: '\\w{4}',
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -133,6 +133,26 @@ const levelData = new Map([
                 pos: {
                     x: 180,
                     y: 75
+                },
+                visible: true
+            } }],
+    ['digit_adjacent', { name: 'Digit Adjacent',
+            statictargets: ['(555) 867-5309', '', '(123) 456-7890'],
+            dynamictargets: [],
+            matchregex: '\\d{3}-\\d{4}',
+            matchregexflags: 'g',
+            checkgroups: false,
+            entries: 1,
+            hideflags: true,
+            leveltext: '',
+            addref: [['\\d', 'digit character'],
+                ['\\D', 'non-digit character']],
+            next: 'end',
+            prev: 'word_esque',
+            mapdata: {
+                pos: {
+                    x: 360,
+                    y: 0
                 },
                 visible: true
             } }],

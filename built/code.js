@@ -1,20 +1,27 @@
 import { levelData } from './levelData.js';
-function create(type) { return document.createElement(type); }
-let rightCol = document.getElementById('right-col');
-let leftCol = document.getElementById('left-col');
-let bottomPane = document.getElementById('bottom-pane');
-let game = document.getElementById('game');
-let regexEntry = document.getElementById('regex-entry');
-let subEntry = document.getElementById('sub-entry');
-let menu = document.getElementById('menu');
-let menuRight = document.getElementById('menu-right');
-let menuView = document.getElementById('menu-view');
-let menuLevelText = document.getElementById('menu-level-text');
-let menuLevelStart = document.getElementById('level-start-button');
-let navPrev = document.getElementById('prev-nav');
-let navMap = document.getElementById('map-nav');
-let navNext = document.getElementById('next-nav');
-let toggleLight = document.getElementById('toggle-light');
+const create = document.createElement.bind(document);
+function getById(id) {
+    const element = document.getElementById(id);
+    if (element === null) {
+        throw new ReferenceError(`#${id} Could not be found in document.`);
+    }
+    return element;
+}
+let rightCol = getById('right-col');
+let leftCol = getById('left-col');
+let bottomPane = getById('bottom-pane');
+let game = getById('game');
+let regexEntry = getById('regex-entry');
+let subEntry = getById('sub-entry');
+let menu = getById('menu');
+let menuRight = getById('menu-right');
+let menuView = getById('menu-view');
+let menuLevelText = getById('menu-level-text');
+let menuLevelStart = getById('level-start-button');
+let navPrev = getById('prev-nav');
+let navMap = getById('map-nav');
+let navNext = getById('next-nav');
+let toggleLight = getById('toggle-light');
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname);
 isTest = false;
 function overlapSpan(text, spans) {
@@ -58,7 +65,7 @@ function overlapSpan(text, spans) {
     result = result.replace(/▶/g, '&gt;');
     return result;
 }
-// document.getElementById('right-col-toggle').onclick = function() {
+// getById('right-col-toggle').onclick = function() {
 //     rightCol.classList.toggle('closed')
 //     bottomPane.classList.toggle('closed')
 // }
@@ -87,7 +94,7 @@ let saveData = function () {
 if (!gameData.introPlayed) {
     let introText = Array.from("welcome to regex gallery").reverse();
     let currentText = '';
-    let introContainer = document.createElement('p');
+    let introContainer = create('p');
     introContainer.className = 'intro';
     introContainer.innerText = '//';
     game.append(introContainer);
@@ -201,7 +208,7 @@ function start(level) {
     subEntry.innerHTML = '';
     curTargets = [];
     for (const [index, target] of Array.from(curLevel.dynamictargets.entries())) {
-        let newTarget = document.createElement('p');
+        let newTarget = create('p');
         newTarget.className = 'target scroller';
         newTarget.style.top = `${index}em`;
         newTarget.style.animationDelay = `-${Math.random() * 30}s`;
@@ -210,7 +217,7 @@ function start(level) {
         game.append(newTarget);
     }
     for (const target of curLevel.statictargets) {
-        let newTarget = document.createElement('p');
+        let newTarget = create('p');
         newTarget.className = 'target';
         newTarget.innerText = target;
         curTargets.push(newTarget);
@@ -262,9 +269,9 @@ function startNextLevel() {
     }
 }
 function addRegexEntry(regexEntry) {
-    let newRegexInput = document.createElement('span');
-    let newFlagInput = document.createElement('span');
-    let newP = document.createElement('p');
+    let newRegexInput = create('span');
+    let newFlagInput = create('span');
+    let newP = create('p');
     newRegexInput.className = 'regex-input';
     newRegexInput.contentEditable = "true";
     newFlagInput.className = 'flag-input';
@@ -417,7 +424,7 @@ function moveDrag(ev) {
     }
 }
 function updateView() {
-    menuView.style.transform = `translate(50%, 50%) translate(${curX}px, ${curY}px) scale(${zoomLevel})`;
+    menuView.style.transform = `translate(50%, 50%) scale(${zoomLevel}) translate(${curX}px, ${curY}px)`;
 }
 menuRight.addEventListener('wheel', (ev) => {
     ev.preventDefault();
@@ -445,7 +452,7 @@ void function createMenuLevels() {
         if (!level.mapdata.visible) {
             continue;
         }
-        let levelButton = document.createElement('button');
+        let levelButton = create('button');
         levelButton.className = 'level';
         levelButton.style.left = `${level.mapdata.pos.x}px`;
         levelButton.style.top = `${level.mapdata.pos.y}px`;
@@ -493,7 +500,7 @@ function updateMenuLines() {
     }
 }
 function makeMenuLine(pos1, pos2) {
-    let line = document.createElement('div');
+    let line = create('div');
     line.className = 'line';
     let mid = getMidpoint(pos1, pos2);
     let angle = getAngle(pos1, pos2);

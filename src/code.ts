@@ -1,23 +1,30 @@
 import {levelData} from './levelData.js'
 import {GameData, Level, Point} from './types.js'
 
-function create(type: string): HTMLElement {return document.createElement(type)}
+const create = document.createElement.bind(document)
+function getById(id: string): HTMLElement {
+    const element = document.getElementById(id)
+    if (element === null) {
+        throw new ReferenceError(`#${id} Could not be found in document.`)
+    }
+    return element
+}
 
-let rightCol = document.getElementById('right-col')!
-let leftCol = document.getElementById('left-col')!
-let bottomPane = document.getElementById('bottom-pane')!
-let game = document.getElementById('game')!
-let regexEntry = document.getElementById('regex-entry')!
-let subEntry = document.getElementById('sub-entry')!
-let menu = document.getElementById('menu')!
-let menuRight = document.getElementById('menu-right')!
-let menuView = document.getElementById('menu-view')!
-let menuLevelText = document.getElementById('menu-level-text')!
-let menuLevelStart = document.getElementById('level-start-button')!
-let navPrev = document.getElementById('prev-nav')!
-let navMap = document.getElementById('map-nav')!
-let navNext = document.getElementById('next-nav')!
-let toggleLight = document.getElementById('toggle-light')!
+let rightCol = getById('right-col')
+let leftCol = getById('left-col')
+let bottomPane = getById('bottom-pane')
+let game = getById('game')
+let regexEntry = getById('regex-entry')
+let subEntry = getById('sub-entry')
+let menu = getById('menu')
+let menuRight = getById('menu-right')
+let menuView = getById('menu-view')
+let menuLevelText = getById('menu-level-text')
+let menuLevelStart = getById('level-start-button')
+let navPrev = getById('prev-nav')
+let navMap = getById('map-nav')
+let navNext = getById('next-nav')
+let toggleLight = getById('toggle-light')
 
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
 isTest = false
@@ -62,7 +69,7 @@ function overlapSpan(text: string, spans: Array<[string, number, number]>): stri
     return result
 }
 
-// document.getElementById('right-col-toggle').onclick = function() {
+// getById('right-col-toggle').onclick = function() {
 //     rightCol.classList.toggle('closed')
 //     bottomPane.classList.toggle('closed')
 // }
@@ -90,7 +97,7 @@ let saveData = function() {
 if (!gameData.introPlayed) {
     let introText = Array.from("welcome to regex gallery").reverse()
     let currentText = ''
-    let introContainer = document.createElement('p')
+    let introContainer = create('p')
     introContainer.className = 'intro'
     introContainer.innerText = '//'
     game.append(introContainer)
@@ -163,7 +170,7 @@ function spanifyAndCheck() {
         }, 1000)
     }
 }
-function indicesToSpans(indices: number[][][], className: string) {
+function indicesToSpans(indices: number[][][], className: string): [string, number, number][] {
     let result = []
     for (const outer of indices) {
         for (const inner of outer) {
@@ -172,7 +179,7 @@ function indicesToSpans(indices: number[][][], className: string) {
     }
     return result
 }
-function start(level: string | null) {
+function start(level: string | null): void {
     
     if (level === null) {
         let temp = Array.from(gameData.completedSet).pop()
@@ -197,7 +204,7 @@ function start(level: string | null) {
     subEntry.innerHTML = ''
     curTargets = []
     for (const [index, target] of Array.from(curLevel.dynamictargets.entries())) {
-        let newTarget = document.createElement('p')
+        let newTarget = create('p')
         newTarget.className = 'target scroller'
         newTarget.style.top = `${index}em`
         newTarget.style.animationDelay = `-${Math.random() * 30}s`
@@ -206,7 +213,7 @@ function start(level: string | null) {
         game.append(newTarget)
     }
     for (const target of curLevel.statictargets) {
-        let newTarget = document.createElement('p')
+        let newTarget = create('p')
         newTarget.className = 'target'
         newTarget.innerText = target
         curTargets.push(newTarget)
@@ -245,7 +252,7 @@ function getLevel(id: string): Level {
     }
     return level
 }
-function startNextLevel() {
+function startNextLevel(): void {
     if (curLevel.next !== null) {
         start(curLevel.next)
     } else {
@@ -253,10 +260,10 @@ function startNextLevel() {
         focusLevels([curLevelId])
     }
 }
-function addRegexEntry(regexEntry: HTMLElement) {
-    let newRegexInput = document.createElement('span')
-    let newFlagInput = document.createElement('span')
-    let newP = document.createElement('p')
+function addRegexEntry(regexEntry: HTMLElement): void {
+    let newRegexInput = create('span')
+    let newFlagInput = create('span')
+    let newP = create('p')
     newRegexInput.className = 'regex-input'
     newRegexInput.contentEditable = "true"
     newFlagInput.className = 'flag-input'
@@ -276,7 +283,7 @@ function addRegexEntry(regexEntry: HTMLElement) {
     curEntries.push([newRegexInput, newFlagInput])
     regexEntry.append(newP)
 }
-function fixText(this: HTMLElement) {
+function fixText(this: HTMLElement): void {
     this.innerText = this.innerText
 }
 function notNull<T>(value: T | null): value is T {
@@ -314,7 +321,7 @@ function regexToIndices(regexString: string, regexFlags: string, matchString: st
 }
 let menuOpen = false
 let menuDebounce = false
-function handleKey(e: KeyboardEvent) {
+function handleKey(e: KeyboardEvent): void {
     if (!menuDebounce) {
         switch (e.code) {
             case 'Enter':
@@ -325,13 +332,13 @@ function handleKey(e: KeyboardEvent) {
     }
 }
 navMap.onclick = ()=>{toggleMenu()}
-function handleEntry() {
+function handleEntry(): void {
     if (!menuOpen) {
         (document.activeElement as HTMLElement).blur()
         spanifyAndCheck()
     }
 }
-function toggleMenu() {
+function toggleMenu(): void {
     if (!menuDebounce) {
         menuDebounce = true
         if (menuOpen) {
@@ -357,7 +364,7 @@ let startPos: Point = {x:-1, y:-1}
 let lastPos: Point = {x:-1, y:-1}
 let moving = false
 let changedPos = (x: number,y: number)=> !(startPos.x===x && startPos.y===y)
-function showLevelInfo(key: string) {
+function showLevelInfo(key: string): void {
     let levelName = getLevel(key).name
     let topics = getLevel(key).addref.map((ref)=>{
         return `<span class="code">${ref[0]}</span> - <span class="code">${ref[1]}</span>`
@@ -371,7 +378,7 @@ function showLevelInfo(key: string) {
     }
     menuLevelText.innerHTML = `<h3>${levelName}</h3><h4>Covered topics:</h4>${topics.join('<br/>')}`
 }
-function focusLevels(levels: string[]) {
+function focusLevels(levels: string[]): void {
     let totX = 0
     let totY = 0
     for (const levelKey of levels) {
@@ -387,17 +394,17 @@ function focusLevels(levels: string[]) {
     zoomLevel = 1
     updateView()
 }
-function startDrag(ev: MouseEvent) {
+function startDrag(ev: MouseEvent): void {
     lastPos.x = ev.x
     lastPos.y = ev.y
     startPos.x = ev.x
     startPos.y = ev.y
     moving = true
 }
-function endDrag() {
+function endDrag(): void {
     moving = false
 }
-function moveDrag(ev: MouseEvent) {
+function moveDrag(ev: MouseEvent): void {
     if (moving) {
         let deltaX = ev.x - lastPos.x
         let deltaY = ev.y - lastPos.y
@@ -408,8 +415,8 @@ function moveDrag(ev: MouseEvent) {
         lastPos.y = ev.y
     }
 }
-function updateView() {
-    menuView.style.transform = `translate(50%, 50%) translate(${curX}px, ${curY}px) scale(${zoomLevel})`
+function updateView(): void {
+    menuView.style.transform = `translate(50%, 50%) scale(${zoomLevel}) translate(${curX}px, ${curY}px)`
 }
 menuRight.addEventListener('wheel', (ev)=>{
     ev.preventDefault();
@@ -419,8 +426,8 @@ menuRight.addEventListener('wheel', (ev)=>{
 document.addEventListener('mousemove', moveDrag)
 menuRight.addEventListener('mousedown', startDrag)
 document.addEventListener('mouseup', endDrag)
-let levelMap = new Map<string, HTMLElement>()
-let lineMap = new Map<string, HTMLElement>()
+let levelMap = new Map<string, HTMLButtonElement>()
+let lineMap = new Map<string, HTMLDivElement>()
 void function createMenuLevels() {
     menuView.innerHTML = ''
     for (const [key, level] of Array.from(levelData.entries())) {
@@ -433,7 +440,7 @@ void function createMenuLevels() {
     }
     for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {continue}
-        let levelButton = document.createElement('button')
+        let levelButton = create('button')
         levelButton.className = 'level'
         levelButton.style.left = `${level.mapdata.pos.x}px`
         levelButton.style.top = `${level.mapdata.pos.y}px`
@@ -443,7 +450,7 @@ void function createMenuLevels() {
         menuView.append(levelButton)
     }
 }()
-function updateMenuLevels() {
+function updateMenuLevels(): void {
     for (const [key, button] of Array.from(levelMap.entries())) {
         if (!gameData.completedSet.has(getLevel(key).prev??'')) {
             if (getLevel(key).prev !== null) {
@@ -466,7 +473,7 @@ function updateMenuLevels() {
     }
     updateMenuLines()
 }
-function updateMenuLines() {
+function updateMenuLines(): void {
     for (const [key, line] of Array.from(lineMap.entries())) {
         if (!gameData.completedSet.has(getLevel(key).prev??'')) {
             if (getLevel(key).prev !== null) {
@@ -478,7 +485,7 @@ function updateMenuLines() {
     }
 }
 function makeMenuLine(pos1: Point, pos2: Point) {
-    let line = document.createElement('div')
+    let line = create('div')
     line.className = 'line'
     let mid = getMidpoint(pos1, pos2)
     let angle = getAngle(pos1, pos2)
@@ -489,15 +496,15 @@ function makeMenuLine(pos1: Point, pos2: Point) {
     line.style.left = `${mid.x}px`
     return line
 }
-function getMidpoint(p1: Point, p2: Point) {
+function getMidpoint(p1: Point, p2: Point): Point {
     return {x: (p1.x+p2.x)/2, y: (p1.y+p2.y)/2}
 }
-function getAngle(p1: Point, p2: Point) {
+function getAngle(p1: Point, p2: Point): number {
     let x = p1.x - p2.x
     let y = p1.y - p2.y
     return Math.atan2(y, x)
 }
-function getLength(p1: Point, p2: Point) {
+function getLength(p1: Point, p2: Point): number {
     return Math.sqrt(((p1.x-p2.x)**2) + ((p1.y-p2.y)**2))
 }
 //updateMenuLevels()
