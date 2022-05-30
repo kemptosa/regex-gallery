@@ -137,6 +137,7 @@ function resetData(save) {
     }
     start(null);
 }
+window.resetData = resetData;
 function spanifyAndCheck() {
     if (curLevel === undefined) {
         return;
@@ -236,7 +237,7 @@ function start(level) {
     }
     else {
         if (gameData.completedSet.has(curLevelId)) {
-            navNext.onclick = () => { start(curLevel.next); };
+            navNext.onclick = () => { startNextLevel(); };
             navNext.classList.remove('inactive');
         }
         else {
@@ -247,7 +248,7 @@ function start(level) {
         navPrev.classList.add('inactive');
     }
     else {
-        navPrev.onclick = () => { start(curLevel.prev); };
+        navPrev.onclick = () => { startLastLevel(); };
         navPrev.classList.remove('inactive');
     }
     updateMenuLevels();
@@ -259,13 +260,32 @@ function getLevel(id) {
     }
     return level;
 }
-function startNextLevel() {
-    if (curLevel.next !== null) {
-        start(curLevel.next);
+function startLastLevel() {
+    if (curLevel.prev.length === 1) {
+        start(curLevel.prev[0]);
     }
     else {
         openMenu();
-        focusLevels([curLevelId]);
+        if (curLevel.prev.length >= 1) {
+            focusLevels(curLevel.prev);
+        }
+        else {
+            focusLevels([curLevelId]);
+        }
+    }
+}
+function startNextLevel() {
+    if (curLevel.next.length === 1) {
+        start(curLevel.next[0]);
+    }
+    else {
+        openMenu();
+        if (curLevel.next.length >= 1) {
+            focusLevels(curLevel.next);
+        }
+        else {
+            focusLevels([curLevelId]);
+        }
     }
 }
 function addRegexEntry(regexEntry) {
@@ -442,11 +462,13 @@ void function createMenuLevels() {
         if (!level.mapdata.visible) {
             continue;
         }
-        if (level.prev !== null) {
-            let line = makeMenuLine(level.mapdata.pos, getLevel(level.prev).mapdata.pos);
-            lineMap.set(key, line);
+        let levelLines = [];
+        for (const prev of level.prev) {
+            let line = makeMenuLine(level.mapdata.pos, getLevel(prev).mapdata.pos);
+            levelLines.push(line);
             menuView.append(line);
         }
+        lineMap.set(key, levelLines);
     }
     for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {
@@ -462,10 +484,16 @@ void function createMenuLevels() {
         menuView.append(levelButton);
     }
 }();
+function setHasAll(set, arr) {
+    let hasAll = true;
+    for (const item of arr) {
+        hasAll = hasAll && set.has(item);
+    }
+    return hasAll;
+}
 function updateMenuLevels() {
-    var _a;
     for (const [key, button] of Array.from(levelMap.entries())) {
-        if (!gameData.completedSet.has((_a = getLevel(key).prev) !== null && _a !== void 0 ? _a : '')) {
+        if (!setHasAll(gameData.completedSet, getLevel(key).prev)) {
             if (getLevel(key).prev !== null) {
                 button.classList.add('inactive');
                 button.onclick = () => { };
@@ -488,15 +516,14 @@ function updateMenuLevels() {
     updateMenuLines();
 }
 function updateMenuLines() {
-    var _a;
-    for (const [key, line] of Array.from(lineMap.entries())) {
-        if (!gameData.completedSet.has((_a = getLevel(key).prev) !== null && _a !== void 0 ? _a : '')) {
+    for (const [key, lines] of Array.from(lineMap.entries())) {
+        if (!setHasAll(gameData.completedSet, getLevel(key).prev)) {
             if (getLevel(key).prev !== null) {
-                line.classList.add('inactive');
+                lines.forEach((line) => line.classList.add('inactive'));
                 continue;
             }
         }
-        line.classList.remove('inactive');
+        lines.forEach((line) => line.classList.remove('inactive'));
     }
 }
 function makeMenuLine(pos1, pos2) {

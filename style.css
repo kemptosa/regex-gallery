@@ -201,7 +201,7 @@ body.light {
     border-color: var(--textdisabled);
     color: var(--textdisabled);
 }
-.level.highlight {
+.level:not(.inactive).highlight {
     animation: 1.5s linear 0s infinite normal highlight-border, 1.5s linear 0s infinite normal highlights;
 }
 .line {

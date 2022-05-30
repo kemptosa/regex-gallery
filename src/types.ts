@@ -17,8 +17,8 @@ export interface Level {
     hideflags: boolean,
     leveltext: string,
     addref: [string,string][],
-    next: string | null,
-    prev: string | null,
+    next: string[],
+    prev: string[],
     mapdata: MapData
 }
 export interface GameData {

@@ -136,7 +136,8 @@ function resetData(save: boolean) {
     if (save) {saveData()}
     start(null)
 }
-function spanifyAndCheck() {
+(window as any).resetData = resetData
+function spanifyAndCheck(): void {
     if (curLevel === undefined) {return}
     let isAllComplete = true
     for (const target of curTargets) {
@@ -231,7 +232,7 @@ function start(level: string | null): void {
         setTimeout(()=>{openMenu()},3500)
     } else {
         if (gameData.completedSet.has(curLevelId)) {
-            navNext.onclick = ()=>{start(curLevel.next)}
+            navNext.onclick = ()=>{startNextLevel()}
             navNext.classList.remove('inactive')
         } else {
             navNext.classList.add('inactive')
@@ -240,7 +241,7 @@ function start(level: string | null): void {
     if (curLevel.prev === null) {
         navPrev.classList.add('inactive')
     } else {
-        navPrev.onclick = ()=>{start(curLevel.prev)}
+        navPrev.onclick = ()=>{startLastLevel()}
         navPrev.classList.remove('inactive')
     }
     updateMenuLevels()
@@ -252,12 +253,28 @@ function getLevel(id: string): Level {
     }
     return level
 }
-function startNextLevel(): void {
-    if (curLevel.next !== null) {
-        start(curLevel.next)
+function startLastLevel(): void {
+    if (curLevel.prev.length === 1) {
+        start(curLevel.prev[0])
     } else {
         openMenu()
-        focusLevels([curLevelId])
+        if (curLevel.prev.length >= 1) {
+            focusLevels(curLevel.prev)
+        } else {
+            focusLevels([curLevelId])
+        }
+    }
+}
+function startNextLevel(): void {
+    if (curLevel.next.length === 1) {
+        start(curLevel.next[0])
+    } else {
+        openMenu()
+        if (curLevel.next.length >= 1) {
+            focusLevels(curLevel.next)
+        } else {
+            focusLevels([curLevelId])
+        }
     }
 }
 function addRegexEntry(regexEntry: HTMLElement): void {
@@ -427,16 +444,18 @@ document.addEventListener('mousemove', moveDrag)
 menuRight.addEventListener('mousedown', startDrag)
 document.addEventListener('mouseup', endDrag)
 let levelMap = new Map<string, HTMLButtonElement>()
-let lineMap = new Map<string, HTMLDivElement>()
+let lineMap = new Map<string, HTMLDivElement[]>()
 void function createMenuLevels() {
     menuView.innerHTML = ''
     for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {continue}
-        if (level.prev !== null) {
-            let line = makeMenuLine(level.mapdata.pos, getLevel(level.prev).mapdata.pos)
-            lineMap.set(key, line)
+        let levelLines = []
+        for (const prev of level.prev) {
+            let line = makeMenuLine(level.mapdata.pos, getLevel(prev).mapdata.pos)
+            levelLines.push(line)
             menuView.append(line)
         }
+        lineMap.set(key, levelLines)
     }
     for (const [key, level] of Array.from(levelData.entries())) {
         if (!level.mapdata.visible) {continue}
@@ -450,9 +469,16 @@ void function createMenuLevels() {
         menuView.append(levelButton)
     }
 }()
+function setHasAll<T>(set: Set<T>, arr: T[]): boolean {
+    let hasAll = true
+    for (const item of arr) {
+        hasAll = hasAll && set.has(item)
+    }
+    return hasAll
+}
 function updateMenuLevels(): void {
     for (const [key, button] of Array.from(levelMap.entries())) {
-        if (!gameData.completedSet.has(getLevel(key).prev??'')) {
+        if (!setHasAll(gameData.completedSet, getLevel(key).prev)) {
             if (getLevel(key).prev !== null) {
                 button.classList.add('inactive')
                 button.onclick = ()=>{}
@@ -474,17 +500,17 @@ function updateMenuLevels(): void {
     updateMenuLines()
 }
 function updateMenuLines(): void {
-    for (const [key, line] of Array.from(lineMap.entries())) {
-        if (!gameData.completedSet.has(getLevel(key).prev??'')) {
+    for (const [key, lines] of Array.from(lineMap.entries())) {
+        if (!setHasAll(gameData.completedSet, getLevel(key).prev)) {
             if (getLevel(key).prev !== null) {
-                line.classList.add('inactive')
+                lines.forEach((line)=>line.classList.add('inactive'))
                 continue;
             }
         }
-        line.classList.remove('inactive')
+        lines.forEach((line)=>line.classList.remove('inactive'))
     }
 }
-function makeMenuLine(pos1: Point, pos2: Point) {
+function makeMenuLine(pos1: Point, pos2: Point): HTMLDivElement {
     let line = create('div')
     line.className = 'line'
     let mid = getMidpoint(pos1, pos2)
