@@ -244,6 +244,7 @@ function start(level: string | null): void {
         navPrev.onclick = ()=>{startLastLevel()}
         navPrev.classList.remove('inactive')
     }
+    curEntries[0][0].focus()
     updateMenuLevels()
 }
 function getLevel(id: string): Level {

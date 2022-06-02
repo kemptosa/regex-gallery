@@ -251,6 +251,7 @@ function start(level) {
         navPrev.onclick = () => { startLastLevel(); };
         navPrev.classList.remove('inactive');
     }
+    curEntries[0][0].focus();
     updateMenuLevels();
 }
 function getLevel(id) {
