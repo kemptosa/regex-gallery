@@ -289,6 +289,12 @@ function startNextLevel() {
         }
     }
 }
+function preventDoubleFocus(ev) {
+    if (document.activeElement === this) {
+        this.blur();
+        this.focus();
+    }
+}
 function addRegexEntry(regexEntry) {
     let newRegexInput = create('span');
     let newFlagInput = create('span');
@@ -308,6 +314,8 @@ function addRegexEntry(regexEntry) {
     if (!curLevel.hideflags) {
         newP.append(newFlagInput);
     }
+    newRegexInput.addEventListener('click', preventDoubleFocus);
+    newFlagInput.addEventListener('click', preventDoubleFocus);
     newRegexInput.addEventListener('focusout', fixText);
     newFlagInput.addEventListener('focusout', fixText);
     newRegexInput.addEventListener('focusout', handleEntry);
