@@ -16,7 +16,8 @@ const levelData = new Map([
                     x: 0,
                     y: 0
                 },
-                visible: true
+                visible: true,
+                attributes: []
             } }],
     ['cats_and_bars', { name: 'Cats and Bars',
             statictargets: ['cat', 'bar'],
@@ -37,7 +38,8 @@ const levelData = new Map([
                     x: 90,
                     y: 0
                 },
-                visible: true
+                visible: true,
+                attributes: []
             } }],
     ['more_specific_non', { name: 'More Specific Non-specificity',
             statictargets: ['dab', 'cat', 'cob'],
@@ -56,7 +58,8 @@ const levelData = new Map([
                     x: 180,
                     y: 0
                 },
-                visible: true
+                visible: true,
+                attributes: []
             } }],
     ['word_esque', { name: 'Word-esque',
             statictargets: ['%##@', 'Rita', 'pack', 'rend'],
@@ -76,7 +79,8 @@ const levelData = new Map([
                     x: 270,
                     y: 0
                 },
-                visible: true
+                visible: true,
+                attributes: []
             } }],
     ['an_unknown_quantity_i', { name: 'An Unknown Quantity, Part I',
             statictargets: ['ct scan', 'cat scan', 'emi scan'],
@@ -95,7 +99,8 @@ const levelData = new Map([
                     x: 0,
                     y: 75
                 },
-                visible: true
+                visible: true,
+                attributes: []
             } }],
     ['an_unknown_quantity_ii', { name: 'An Unknown Quantity, Part II',
             statictargets: ['<Tarzan>', '<Tarzan', 'Tarzan>', 'Tarzan'],
@@ -114,7 +119,8 @@ const levelData = new Map([
                     x: -90,
                     y: 150
                 },
-                visible: true
+                visible: true,
+                attributes: []
             } }],
     ['beyond_the_boundary', { name: 'Beyond the Boundary',
             statictargets: ['catfish', 'bobcat', 'catatonic'],
@@ -134,7 +140,8 @@ const levelData = new Map([
                     x: 180,
                     y: 75
                 },
-                visible: true
+                visible: true,
+                attributes: []
             } }],
     ['digit_adjacent', { name: 'Digit Adjacent',
             statictargets: ['(555) 867-5309', '', '(123) 456-7890'],
@@ -144,7 +151,7 @@ const levelData = new Map([
             checkgroups: false,
             entries: 1,
             hideflags: true,
-            leveltext: 'Character Class <span class="code">\\d</span>. This token is another of the convenience classes for matching a set of characters, and will match any number. (Essentially equivalent to <span class="code">[0-9]</span>.)<br/><br/>As always, this token be inverted (<span class="code">\\D</span>) to match any character that is <em>not</em> a number.',
+            leveltext: 'Character Class <span class="code">\\d</span>. This token is another of the convenience classes for matching a set of characters, and will match any number. (Essentially equivalent to <span class="code">[0-9]</span>.)<br/><br/>As usual, this token can be inverted (<span class="code">\\D</span>) to match any character that is <em>not</em> a number.',
             addref: [['\\d', 'digit character'],
                 ['\\D', 'non-digit character']],
             next: ['end'],
@@ -154,7 +161,48 @@ const levelData = new Map([
                     x: 360,
                     y: 0
                 },
-                visible: true
+                visible: true,
+                attributes: []
+            } }],
+    ['regarding_flags_i', { name: 'Regarding Flags: I',
+            statictargets: ['IDENTIFICATION DIVISION', 'identification division'],
+            dynamictargets: ['IDENTIFICATION division', 'identification DIVISION', "iDeNtIfIcAtIoN DiViSiOn"],
+            matchregex: 'identification division',
+            matchregexflags: 'i',
+            checkgroups: false,
+            entries: 1,
+            hideflags: false,
+            leveltext: 'Regular Expressions can also have \'flags\' attached to them. Flags are essentially toggle switches for various settings or behaviors an expression can have.<br/><br/>A new text entry field has been unlocked for you, to the right of the regex entry. This is where you can specify flags for your regex. A simple, but quite useful flag is the <span class="code"><span class="flag">i</span></span> flag. When this flag is set, the regular expression will ignore the casing of any letter. Non-letter characters are unaffected.',
+            addref: [['<span class="flag">i</span>', 'case insensitive flag']],
+            next: ['end'],
+            prev: ['digit_adjacent'],
+            mapdata: {
+                pos: {
+                    x: 450,
+                    y: 0
+                },
+                visible: true,
+                attributes: ['blue']
+            } }],
+    ['regarding_flags_ii', { name: 'Regarding Flags: II',
+            statictargets: ['a b c d e f g'],
+            dynamictargets: [],
+            matchregex: '.',
+            matchregexflags: 'g',
+            checkgroups: false,
+            entries: 1,
+            hideflags: false,
+            leveltext: '',
+            addref: [['<span class="flag">g</span>', 'global flag']],
+            next: ['end'],
+            prev: ['regarding_flags_i'],
+            mapdata: {
+                pos: {
+                    x: 540,
+                    y: 0
+                },
+                visible: false,
+                attributes: ['blue']
             } }],
     ['end', { name: 'The End',
             statictargets: ['THE END', '(of this path)'],
@@ -173,7 +221,8 @@ const levelData = new Map([
                     x: 180,
                     y: 75
                 },
-                visible: false
+                visible: false,
+                attributes: []
             } }]
 ]);
 export { levelData };

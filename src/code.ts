@@ -27,7 +27,7 @@ let navNext = getById('next-nav')
 let toggleLight = getById('toggle-light')
 
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname)
-isTest = false
+//isTest = false
 function overlapSpan(text: string, spans: Array<[string, number, number]>): string {
     let result = ''
     text = text.replace(/</g, '◀')
@@ -291,6 +291,9 @@ function addRegexEntry(regexEntry: HTMLElement): void {
     if (curLevelId === 'intro') {
         newRegexInput.classList.add('highlight')
     }
+    if (curLevelId === 'regarding_flags_i') {
+        newFlagInput.classList.add('highlight')
+    }
     if (!curLevel.hideflags) {
         newP.append(newFlagInput)
     }
@@ -381,7 +384,7 @@ let zoomLevel = 1
 let startPos: Point = {x:-1, y:-1}
 let lastPos: Point = {x:-1, y:-1}
 let moving = false
-let changedPos = (x: number,y: number)=> !(startPos.x===x && startPos.y===y)
+let changedPos = (x: number,y: number) => !(startPos.x===x && startPos.y===y)
 function showLevelInfo(key: string): void {
     let levelName = getLevel(key).name
     let topics = getLevel(key).addref.map((ref)=>{
@@ -480,13 +483,16 @@ function setHasAll<T>(set: Set<T>, arr: T[]): boolean {
 function updateMenuLevels(): void {
     for (const [key, button] of Array.from(levelMap.entries())) {
         if (!setHasAll(gameData.completedSet, getLevel(key).prev)) {
-            if (getLevel(key).prev !== null) {
-                button.classList.add('inactive')
-                button.onclick = ()=>{}
-                continue;
+            if (!isTest){
+                if (getLevel(key).prev !== null) {
+                    button.classList.add('inactive')
+                    button.onclick = ()=>{}
+                    continue;
+                }
             }
         }
         button.classList.remove('inactive')
+        button.classList.add(...getLevel(key).mapdata.attributes)
         button.onclick = (ev: MouseEvent)=>{
             if (!changedPos(ev.x, ev.y)) {
                 showLevelInfo(key)

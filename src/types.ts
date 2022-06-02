@@ -1,10 +1,12 @@
+export type Attribute = 'challenge' | 'final' | 'red' | 'blue'
 export interface Point {
     x: number,
     y: number
 }
 export interface MapData {
     pos: Point,
-    visible: boolean
+    visible: boolean,
+    attributes: Attribute[]
 }
 export interface Level {
     name: string,

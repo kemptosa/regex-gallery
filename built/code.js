@@ -23,7 +23,7 @@ let navMap = getById('map-nav');
 let navNext = getById('next-nav');
 let toggleLight = getById('toggle-light');
 let isTest = /(?:localhost|127\.0\.0\.1)/.test(document.location.hostname);
-isTest = false;
+//isTest = false
 function overlapSpan(text, spans) {
     let result = '';
     text = text.replace(/</g, '◀');
@@ -302,6 +302,9 @@ function addRegexEntry(regexEntry) {
     if (curLevelId === 'intro') {
         newRegexInput.classList.add('highlight');
     }
+    if (curLevelId === 'regarding_flags_i') {
+        newFlagInput.classList.add('highlight');
+    }
     if (!curLevel.hideflags) {
         newP.append(newFlagInput);
     }
@@ -495,13 +498,16 @@ function setHasAll(set, arr) {
 function updateMenuLevels() {
     for (const [key, button] of Array.from(levelMap.entries())) {
         if (!setHasAll(gameData.completedSet, getLevel(key).prev)) {
-            if (getLevel(key).prev !== null) {
-                button.classList.add('inactive');
-                button.onclick = () => { };
-                continue;
+            if (!isTest) {
+                if (getLevel(key).prev !== null) {
+                    button.classList.add('inactive');
+                    button.onclick = () => { };
+                    continue;
+                }
             }
         }
         button.classList.remove('inactive');
+        button.classList.add(...getLevel(key).mapdata.attributes);
         button.onclick = (ev) => {
             if (!changedPos(ev.x, ev.y)) {
                 showLevelInfo(key);
