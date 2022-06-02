@@ -31,7 +31,7 @@ const levelData = new Map<string, Level>([
     hideflags: true,
     leveltext:'Here you will need the first special token, <span class="code">.</span><br/><br/>The <span class="code">.</span> token is a "wildcard"; it will match any character or symbol in a given position.<br/><br/>To complete this level, you should match any 3 letter word with an "a" in the center.',
     addref:[['.', 'wildcard']],
-    next:[],
+    next:['more_specific_non', 'an_unknown_quantity_i'],
     prev:['intro'],
     mapdata: {
         pos: {
@@ -70,7 +70,7 @@ const levelData = new Map<string, Level>([
     leveltext:'Character classes are extremely useful, but can get lengthy in certain cases. Regex provides some shortcuts for commonly needed character classes.<br/><br/><span class="code">\\w</span> is one such shortcut. It corresponds to a character class which matches any letter (uppercase or lower), any number, and underscores. It\'s formal name is the \'word character\', which may be somewhat offputting due to it\'s aforementioned inclusion of numbers and underscores.<br/><br/>Side note: for most of these \'shortcuts\', if you capitalize the letter, i.e. <span class="code">\\W</span>, it has the effect of inverting the selection. (in this case it would be any character that <em>isn\'t</em> a letter, number or underscore)',
     addref:[['\\w', 'equivalent to [a-zA-Z0-9_]'],
             ['\\W', 'equivalent to [^a-zA-Z0-9_]']],
-    next:['beyond_the_boundary'],
+    next:['beyond_the_boundary', 'digit_adjacent'],
     prev:['more_specific_non'],
     mapdata: {
         pos: {
@@ -106,7 +106,7 @@ const levelData = new Map<string, Level>([
     checkgroups:false,
     entries:1,
     hideflags:true,
-    leveltext:'',
+    leveltext:'<span class="code">?</span> is a quantifier token like <span class="code">*</span>, but instead of matching zero or more of a token, it will match zero or exactly one. It is often referred to the \'optional\' quantifier.<br/><br/>For this level, you must match Tarzan and any angle brackets that surround him if they exist.',
     addref:[['?', '0 or 1 (aka optional)']],
     next:['end'],
     prev:['an_unknown_quantity_i'],
@@ -145,7 +145,7 @@ const levelData = new Map<string, Level>([
     checkgroups:false,
     entries:1,
     hideflags:true,
-    leveltext:'',
+    leveltext:'Character Class <span class="code">\\d</span>. This token is another of the convenience classes for matching a set of characters, and will match any number. (Essentially equivalent to <span class="code">[0-9]</span>.)<br/><br/>As always, this token be inverted (<span class="code">\\D</span>) to match any character that is <em>not</em> a number.',
     addref:[['\\d', 'digit character'],
             ['\\D', 'non-digit character']],
     next:['end'],

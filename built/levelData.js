@@ -30,7 +30,7 @@ const levelData = new Map([
             hideflags: true,
             leveltext: 'Here you will need the first special token, <span class="code">.</span><br/><br/>The <span class="code">.</span> token is a "wildcard"; it will match any character or symbol in a given position.<br/><br/>To complete this level, you should match any 3 letter word with an "a" in the center.',
             addref: [['.', 'wildcard']],
-            next: [],
+            next: ['more_specific_non', 'an_unknown_quantity_i'],
             prev: ['intro'],
             mapdata: {
                 pos: {
@@ -69,7 +69,7 @@ const levelData = new Map([
             leveltext: 'Character classes are extremely useful, but can get lengthy in certain cases. Regex provides some shortcuts for commonly needed character classes.<br/><br/><span class="code">\\w</span> is one such shortcut. It corresponds to a character class which matches any letter (uppercase or lower), any number, and underscores. It\'s formal name is the \'word character\', which may be somewhat offputting due to it\'s aforementioned inclusion of numbers and underscores.<br/><br/>Side note: for most of these \'shortcuts\', if you capitalize the letter, i.e. <span class="code">\\W</span>, it has the effect of inverting the selection. (in this case it would be any character that <em>isn\'t</em> a letter, number or underscore)',
             addref: [['\\w', 'equivalent to [a-zA-Z0-9_]'],
                 ['\\W', 'equivalent to [^a-zA-Z0-9_]']],
-            next: ['beyond_the_boundary'],
+            next: ['beyond_the_boundary', 'digit_adjacent'],
             prev: ['more_specific_non'],
             mapdata: {
                 pos: {
