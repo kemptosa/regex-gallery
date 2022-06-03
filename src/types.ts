@@ -13,6 +13,8 @@ export interface Level {
     statictargets: string[],
     dynamictargets: string[],
     matchregex: string,
+    restrictiontext: string,
+    regexrestriction: [string,string],
     matchregexflags: string,
     checkgroups: boolean,
     entries: number,

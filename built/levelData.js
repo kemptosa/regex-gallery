@@ -3,6 +3,8 @@ const levelData = new Map([
             statictargets: ['regex'],
             dynamictargets: [],
             matchregex: 'regex',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -25,6 +27,8 @@ const levelData = new Map([
                 'bar', 'par', 'jar',
                 'bot', 'lot', 'jot', 'rot', 'cot'],
             matchregex: '.a.',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -45,6 +49,8 @@ const levelData = new Map([
             statictargets: ['dab', 'cat', 'cob'],
             dynamictargets: ['cab', 'dob', 'cot', 'jot', 'cam', 'dot', 'datum', 'jacob', 'fab', 'tob', 'bob'],
             matchregex: '[dc][oa][tb]',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -56,7 +62,7 @@ const levelData = new Map([
             mapdata: {
                 pos: {
                     x: 180,
-                    y: 0
+                    y: -40
                 },
                 visible: true,
                 attributes: []
@@ -65,6 +71,8 @@ const levelData = new Map([
             statictargets: ['%##@', 'Rita', 'pack', 'rend'],
             dynamictargets: ['%a%a', '&how', 'helm', 'salt', 'then', 'bool'],
             matchregex: '\\w{4}',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -77,7 +85,7 @@ const levelData = new Map([
             mapdata: {
                 pos: {
                     x: 270,
-                    y: 0
+                    y: -80
                 },
                 visible: true,
                 attributes: []
@@ -86,6 +94,8 @@ const levelData = new Map([
             statictargets: ['ct scan', 'cat scan', 'emi scan'],
             dynamictargets: ['caaaat', 'caaaaaaaaaaaaaaaaaaaat'],
             matchregex: 'ca*t',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -96,16 +106,18 @@ const levelData = new Map([
             prev: ['cats_and_bars'],
             mapdata: {
                 pos: {
-                    x: 0,
-                    y: 75
+                    x: 180,
+                    y: 40
                 },
                 visible: true,
                 attributes: []
             } }],
     ['an_unknown_quantity_ii', { name: 'An Unknown Quantity, Part II',
             statictargets: ['<Tarzan>', '<Tarzan', 'Tarzan>', 'Tarzan'],
-            dynamictargets: ['<Jane>', '><>', "><>", '><>', "><>"],
+            dynamictargets: ['<Jane>', '><>', '><>', '><>', '><>'],
             matchregex: '<?Tarzan>?',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -116,8 +128,8 @@ const levelData = new Map([
             prev: ['an_unknown_quantity_i'],
             mapdata: {
                 pos: {
-                    x: -90,
-                    y: 150
+                    x: 270,
+                    y: 40
                 },
                 visible: true,
                 attributes: []
@@ -126,6 +138,8 @@ const levelData = new Map([
             statictargets: ['catfish', 'bobcat', 'catatonic'],
             dynamictargets: ['certificate', 'catalonia', 'located', 'cathode'],
             matchregex: '\\bcat',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -137,8 +151,8 @@ const levelData = new Map([
             prev: ['word_esque'],
             mapdata: {
                 pos: {
-                    x: 180,
-                    y: 75
+                    x: 360,
+                    y: -40
                 },
                 visible: true,
                 attributes: []
@@ -147,6 +161,8 @@ const levelData = new Map([
             statictargets: ['(555) 867-5309', '', '(123) 456-7890'],
             dynamictargets: [],
             matchregex: '\\d{3}-\\d{4}',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -154,20 +170,22 @@ const levelData = new Map([
             leveltext: 'Character Class <span class="code">\\d</span>. This token is another of the convenience classes for matching a set of characters, and will match any number. (Essentially equivalent to <span class="code">[0-9]</span>.)<br/><br/>As usual, this token can be inverted (<span class="code">\\D</span>) to match any character that is <em>not</em> a number.',
             addref: [['\\d', 'digit character'],
                 ['\\D', 'non-digit character']],
-            next: ['end'],
+            next: ['regarding_flags_i'],
             prev: ['word_esque'],
             mapdata: {
                 pos: {
                     x: 360,
-                    y: 0
+                    y: -120
                 },
                 visible: true,
                 attributes: []
             } }],
     ['regarding_flags_i', { name: 'Regarding Flags: I',
             statictargets: ['IDENTIFICATION DIVISION', 'identification division'],
-            dynamictargets: ['IDENTIFICATION division', 'identification DIVISION', "iDeNtIfIcAtIoN DiViSiOn"],
+            dynamictargets: ['IDENTIFICATION division', 'identification DIVISION', 'iDeNtIfIcAtIoN DiViSiOn'],
             matchregex: 'identification division',
+            restrictiontext: 'Must not use character classes or groups',
+            regexrestriction: ['(?!.*\[|.*\().*', ''],
             matchregexflags: 'i',
             checkgroups: false,
             entries: 1,
@@ -178,8 +196,8 @@ const levelData = new Map([
             prev: ['digit_adjacent'],
             mapdata: {
                 pos: {
-                    x: 450,
-                    y: 0
+                    x: 360,
+                    y: -200
                 },
                 visible: true,
                 attributes: ['blue']
@@ -188,6 +206,8 @@ const levelData = new Map([
             statictargets: ['a b c d e f g'],
             dynamictargets: [],
             matchregex: '.',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 1,
@@ -198,16 +218,40 @@ const levelData = new Map([
             prev: ['regarding_flags_i'],
             mapdata: {
                 pos: {
-                    x: 540,
-                    y: 0
+                    x: 360,
+                    y: -280
                 },
                 visible: false,
                 attributes: ['blue']
+            } }],
+    ['a_known_quantity', { name: 'A Known Quantity',
+            statictargets: ['two', 'three', 'four', 'eleven'],
+            dynamictargets: ['books', 'cars', 'planes', 'fun words', 'slowly', ''],
+            matchregex: '.{5}',
+            restrictiontext: 'Must be under 5 characters long',
+            regexrestriction: ['^.{0,4}$', ''],
+            matchregexflags: 'g',
+            checkgroups: false,
+            entries: 1,
+            hideflags: true,
+            leveltext: 'Matching an unknown number of characters is nice and all, but you know exactly how many you need? Sure, you could type them all out like <span class="code">eeeeeee</span>, but that\'s a bit repetitive and can become difficult to read.<br/><br/>Introducing the all-purpose specific quantifier, <span class="code">{x}</span>! Simply replace the \'x\' with the number of times you wish to match the preceding token, and voila! <span class="code">eeeeeee</span> can be reduced simply to <span class="code">e{7}</span>!<br/><br/>For this level, simply match 5 of any character using the method above... But you must use less than 5 characters in your regex.',
+            addref: [['{x}', 'exactly x of preceding token']],
+            next: ['end'],
+            prev: ['an_unknown_quantity_i'],
+            mapdata: {
+                pos: {
+                    x: 270,
+                    y: 120
+                },
+                visible: true,
+                attributes: []
             } }],
     ['end', { name: 'The End',
             statictargets: ['THE END', '(of this path)'],
             dynamictargets: [],
             matchregex: 'the end',
+            restrictiontext: 'No restrictions',
+            regexrestriction: ['.*', ''],
             matchregexflags: 'g',
             checkgroups: false,
             entries: 0,
@@ -218,8 +262,8 @@ const levelData = new Map([
             prev: [],
             mapdata: {
                 pos: {
-                    x: 180,
-                    y: 75
+                    x: -999,
+                    y: -999
                 },
                 visible: false,
                 attributes: []

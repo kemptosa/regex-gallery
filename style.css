@@ -240,6 +240,7 @@ p {
 p.leveltext {
     flex: 1 0 0;
     padding: 1rem;
+    line-height: 148%;
 }
 p.target {
     font-size: large;
@@ -306,6 +307,10 @@ p.intro {
 }
 .regex-input br, .flag-input br {
     display: none;
+}
+.regex-input.invalid, .flag-input.invalid {
+    background-color: red;
+    animation: 2s linear 0s infinite normal highlights;
 }
 .regex-input.highlight:empty, .flag-input.highlight:empty {
     animation: 2s linear 0s infinite normal highlights;

@@ -91,7 +91,8 @@ let saveData = function () {
     gameData.completed = Array.from(gameData.completedSet);
     localStorage.setItem('gamedata', JSON.stringify(gameData));
 };
-if (!gameData.introPlayed) {
+// if (!gameData.introPlayed) {
+if (false) {
     let introText = Array.from("welcome to regex gallery").reverse();
     let currentText = '';
     let introContainer = create('p');
@@ -117,7 +118,9 @@ if (!gameData.introPlayed) {
     }, 100);
 }
 else {
-    start(null);
+    setTimeout(() => {
+        start(null);
+    }, 0);
 }
 let curLevelId = 'intro';
 let curLevel = getLevel(curLevelId);
@@ -149,7 +152,7 @@ function spanifyAndCheck() {
         let spans = [];
         for (const [regex, flags] of curEntries) {
             let indices = regexToIndices(regex.innerText, flags.innerText, target.innerText, curLevel.checkgroups);
-            isComplete = isComplete && (JSON.stringify(indices) === JSON.stringify(matchIndices));
+            isComplete && (isComplete = JSON.stringify(indices) === JSON.stringify(matchIndices));
             spans.push(...indicesToSpans(indices, 'at'));
         }
         spans.push(...indicesToSpans(matchIndices, 'ht'));
@@ -162,6 +165,16 @@ function spanifyAndCheck() {
         }
         isAllComplete = isAllComplete && isComplete;
     }
+    let satisfiesAllRestrictions = true;
+    let restriction = new RegExp(...curLevel.regexrestriction);
+    for (const [regex] of curEntries) {
+        let satisfies = restriction.test(regex.innerText);
+        satisfiesAllRestrictions && (satisfiesAllRestrictions = satisfies);
+        if (!satisfies) {
+            regex.classList.add('invalid');
+        }
+    }
+    isAllComplete && (isAllComplete = satisfiesAllRestrictions);
     if (isAllComplete) {
         gameData.completedSet.add(curLevelId);
         if (!isTest) {
@@ -185,6 +198,7 @@ function indicesToSpans(indices, className) {
     return result;
 }
 function start(level) {
+    var _a, _b, _c;
     if (level === null) {
         let temp = Array.from(gameData.completedSet).pop();
         if (temp === undefined) {
@@ -251,9 +265,14 @@ function start(level) {
         navPrev.onclick = () => { startLastLevel(); };
         navPrev.classList.remove('inactive');
     }
-    curEntries[0][0].focus();
+    (_c = (_b = (_a = curEntries === null || curEntries === void 0 ? void 0 : curEntries[0]) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.focus) === null || _c === void 0 ? void 0 : _c.call(_b);
     updateMenuLevels();
 }
+Object.defineProperty(window, 'start', {
+    get() {
+        return start;
+    }
+});
 function getLevel(id) {
     let level = levelData.get(id);
     if (level === undefined) {
@@ -297,6 +316,9 @@ function preventDoubleFocus(ev) {
         }
     }
 }
+function removeInvalid() {
+    this.classList.remove('invalid');
+}
 function addRegexEntry(regexEntry) {
     let newRegexInput = create('span');
     let newFlagInput = create('span');
@@ -318,6 +340,8 @@ function addRegexEntry(regexEntry) {
     }
     newRegexInput.addEventListener('click', preventDoubleFocus);
     newFlagInput.addEventListener('click', preventDoubleFocus);
+    newRegexInput.addEventListener('keydown', removeInvalid);
+    newFlagInput.addEventListener('keydown', removeInvalid);
     newRegexInput.addEventListener('focusout', fixText);
     newFlagInput.addEventListener('focusout', fixText);
     newRegexInput.addEventListener('focusout', handleEntry);
