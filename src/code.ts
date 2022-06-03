@@ -280,8 +280,10 @@ function startNextLevel(): void {
 }
 function preventDoubleFocus(this: HTMLElement, ev: MouseEvent): void {
     if (document.activeElement === this) {
-        this.blur()
-        this.focus()
+        if (this.innerText.length === 0) {
+            this.blur()
+            this.focus()
+        }
     }
 }
 function addRegexEntry(regexEntry: HTMLElement): void {
@@ -318,7 +320,7 @@ function fixText(this: HTMLElement): void {
 function notNull<T>(value: T | null): value is T {
     return value !== null;
 }
-type RegExpMatchArrayWithIndices = RegExpMatchArray & { indices: Array<[number, number]> };
+type withIndices = RegExpMatchArray & { indices: Array<[number, number]> };
 function regexToIndices(regexString: string, regexFlags: string, matchString: string, includeGroups: boolean) {
     regexFlags = regexFlags.toLowerCase()
     if (!regexFlags) {
@@ -342,9 +344,9 @@ function regexToIndices(regexString: string, regexFlags: string, matchString: st
     //indices.pop()
     let indicesWithoutNull: RegExpExecArray[] = indices.filter(notNull)
     if (!includeGroups) {
-        return indicesWithoutNull.map(i=>[[...(i as RegExpMatchArrayWithIndices).indices[0]]])
+        return indicesWithoutNull.map(i=>[[...(i as withIndices).indices[0]]])
     } else {
-        return indicesWithoutNull.map(i=>[...(i as RegExpMatchArrayWithIndices).indices])
+        return indicesWithoutNull.map(i=>[...(i as withIndices).indices])
     }
     
 }

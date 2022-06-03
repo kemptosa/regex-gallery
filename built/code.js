@@ -291,8 +291,10 @@ function startNextLevel() {
 }
 function preventDoubleFocus(ev) {
     if (document.activeElement === this) {
-        this.blur();
-        this.focus();
+        if (this.innerText.length === 0) {
+            this.blur();
+            this.focus();
+        }
     }
 }
 function addRegexEntry(regexEntry) {
