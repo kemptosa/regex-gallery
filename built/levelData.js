@@ -185,7 +185,7 @@ const levelData = new Map([
             dynamictargets: ['IDENTIFICATION division', 'identification DIVISION', 'iDeNtIfIcAtIoN DiViSiOn'],
             matchregex: 'identification division',
             restrictiontext: 'Must not use character classes or groups',
-            regexrestriction: ['(?!.*\[|.*\().*', ''],
+            regexrestriction: ['^(?!.*\\[|.*\\().*$', ''],
             matchregexflags: 'i',
             checkgroups: false,
             entries: 1,
