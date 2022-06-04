@@ -171,6 +171,7 @@ function spanifyAndCheck() {
         let satisfies = restriction.test(regex.innerText);
         satisfiesAllRestrictions && (satisfiesAllRestrictions = satisfies);
         if (!satisfies) {
+            rightCol.classList.add('invalid');
             regex.classList.add('invalid');
         }
     }
@@ -319,6 +320,7 @@ function preventDoubleFocus(ev) {
 }
 function removeInvalid() {
     this.classList.remove('invalid');
+    rightCol.classList.remove('invalid');
 }
 function addRegexEntry(regexEntry) {
     let newRegexInput = create('span');
@@ -526,7 +528,7 @@ void function createMenuLevels() {
 function setHasAll(set, arr) {
     let hasAll = true;
     for (const item of arr) {
-        hasAll = hasAll && set.has(item);
+        hasAll && (hasAll = set.has(item));
     }
     return hasAll;
 }

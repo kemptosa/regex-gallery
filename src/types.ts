@@ -1,3 +1,4 @@
+export type LevelName = 'intro' | 'cats_and_bars' | 'more_specific_non' | 'word_esque' | 'an_unknown_quantity_i' | 'an_unknown_quantity_ii' | 'beyond_the_boundary' | 'digit_adjacent' | 'regarding_flags_i' | 'regarding_flags_ii' | 'a_known_quantity' | 'end'
 export type Attribute = 'challenge' | 'final' | 'red' | 'blue'
 export interface Point {
     x: number,
@@ -21,14 +22,15 @@ export interface Level {
     hideflags: boolean,
     leveltext: string,
     addref: [string,string][],
-    next: string[],
-    prev: string[],
+    next: LevelName[],
+    prev: LevelName[],
     mapdata: MapData
 }
+export type LevelData = Map<LevelName, Level>
 export interface GameData {
     version: string
-    completed: string[],
+    completed: LevelName[],
     introPlayed: boolean,
     currentLevel: number,
-    completedSet: Set<string>
+    completedSet: Set<LevelName>
 }

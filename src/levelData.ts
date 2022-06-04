@@ -1,5 +1,5 @@
-import {Level} from './types.js'
-const levelData = new Map<string, Level>([
+import {Level, LevelData, LevelName} from './types.js'
+const levelData: LevelData = new Map<LevelName, Level>([
     ['intro',{name:'Intro',
     statictargets:['regex'],
     dynamictargets:[],
@@ -235,7 +235,7 @@ const levelData = new Map<string, Level>([
     checkgroups: false,
     entries: 1,
     hideflags: true,
-    leveltext:'Matching an unknown number of characters is nice and all, but you know exactly how many you need? Sure, you could type them all out like <span class="code">eeeeeee</span>, but that\'s a bit repetitive and can become difficult to read.<br/><br/>Introducing the all-purpose specific quantifier, <span class="code">{x}</span>! Simply replace the \'x\' with the number of times you wish to match the preceding token, and voila! <span class="code">eeeeeee</span> can be reduced simply to <span class="code">e{7}</span>!<br/><br/>For this level, simply match 5 of any character using the method above... But you must use less than 5 characters in your regex.',
+    leveltext:'Matching an unknown number of characters is nice and all, but you know exactly how many you need? Sure, you could type them all out like <span class="code">eeeeeee</span>, but that\'s a bit repetitive and can become difficult to read.<br/><br/>Introducing the all-purpose specific quantifier, <span class="code">{x}</span>! Simply replace the \'x\' with the number of times you wish to match the preceding token, and voila! <span class="code">eeeeeee</span> can be reduced simply to <span class="code">e{7}</span>!<br/><br/>For this level, simply match 5 of any character using the method above... <span class="require">But you must use less than 5 characters in your regex.</span>',
     addref:[['{x}','exactly x of preceding token']],
     next:['end'],
     prev:['an_unknown_quantity_i'],

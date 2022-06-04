@@ -1,5 +1,5 @@
 import {levelData} from './levelData.js'
-import {GameData, Level, Point} from './types.js'
+import {GameData, Level, Point, LevelName} from './types.js'
 
 const create = document.createElement.bind(document)
 function getById(id: string): HTMLElement {
@@ -123,7 +123,7 @@ if (false) {
         start(null)
     }, 0)
 }
-let curLevelId = 'intro'
+let curLevelId: LevelName = 'intro'
 let curLevel = getLevel(curLevelId)
 let curEntries: Array<[HTMLElement, HTMLElement]> = []
 let curTargets: HTMLElement[] = []
@@ -167,6 +167,7 @@ function spanifyAndCheck(): void {
         let satisfies = restriction.test(regex.innerText)
         satisfiesAllRestrictions &&= satisfies
         if (!satisfies) {
+            rightCol.classList.add('invalid')
             regex.classList.add('invalid')
         }
     }
@@ -194,7 +195,7 @@ function indicesToSpans(indices: number[][][], className: string): [string, numb
     }
     return result
 }
-function start(level: string | null): void {
+function start(level: LevelName | null): void {
     
     if (level === null) {
         let temp = Array.from(gameData.completedSet).pop()
@@ -268,7 +269,7 @@ Object.defineProperty(window, 'start', {
         return start
     }
 })
-function getLevel(id: string): Level {
+function getLevel(id: LevelName): Level {
     let level = levelData.get(id)
     if (level === undefined) {
         throw new ReferenceError(`${id} is not a valid level in levelData`)
@@ -309,6 +310,7 @@ function preventDoubleFocus(this: HTMLElement, ev: MouseEvent): void {
 }
 function removeInvalid(this: HTMLElement) {
     this.classList.remove('invalid')
+    rightCol.classList.remove('invalid')
 }
 function addRegexEntry(regexEntry: HTMLElement): void {
     let newRegexInput = create('span')
@@ -421,7 +423,7 @@ let startPos: Point = {x:-1, y:-1}
 let lastPos: Point = {x:-1, y:-1}
 let moving = false
 let changedPos = (x: number,y: number) => !(startPos.x===x && startPos.y===y)
-function showLevelInfo(key: string): void {
+function showLevelInfo(key: LevelName): void {
     let levelName = getLevel(key).name
     let topics = getLevel(key).addref.map((ref)=>{
         return `<span class="code">${ref[0]}</span> - <span class="code">${ref[1]}</span>`
@@ -435,7 +437,7 @@ function showLevelInfo(key: string): void {
     }
     menuLevelText.innerHTML = `<h3>${levelName}</h3><h4>Covered topics:</h4>${topics.join('<br/>')}`
 }
-function focusLevels(levels: string[]): void {
+function focusLevels(levels: LevelName[]): void {
     let totX = 0
     let totY = 0
     for (const levelKey of levels) {
@@ -483,8 +485,8 @@ menuRight.addEventListener('wheel', (ev)=>{
 document.addEventListener('mousemove', moveDrag)
 menuRight.addEventListener('mousedown', startDrag)
 document.addEventListener('mouseup', endDrag)
-let levelMap = new Map<string, HTMLButtonElement>()
-let lineMap = new Map<string, HTMLDivElement[]>()
+let levelMap = new Map<LevelName, HTMLButtonElement>()
+let lineMap = new Map<LevelName, HTMLDivElement[]>()
 void function createMenuLevels() {
     menuView.innerHTML = ''
     for (const [key, level] of Array.from(levelData.entries())) {
@@ -512,7 +514,7 @@ void function createMenuLevels() {
 function setHasAll<T>(set: Set<T>, arr: T[]): boolean {
     let hasAll = true
     for (const item of arr) {
-        hasAll = hasAll && set.has(item)
+        hasAll &&= set.has(item)
     }
     return hasAll
 }

@@ -312,6 +312,10 @@ p.intro {
     background-color: red;
     animation: 2s linear 0s infinite normal highlights;
 }
+#right-col.invalid > .leveltext .require {
+    background-color: red;
+    animation: 2s linear 0s infinite normal highlights;
+}
 .regex-input.highlight:empty, .flag-input.highlight:empty {
     animation: 2s linear 0s infinite normal highlights;
 }
