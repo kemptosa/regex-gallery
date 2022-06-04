@@ -258,7 +258,9 @@ function start(level: string | null): void {
         navPrev.onclick = ()=>{startLastLevel()}
         navPrev.classList.remove('inactive')
     }
-    curEntries?.[0]?.[0]?.focus?.()
+    if (curEntries[0] !== undefined) {
+        curEntries[0][0].focus()
+    }
     updateMenuLevels()
 }
 Object.defineProperty(window, 'start', {

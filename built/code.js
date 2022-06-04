@@ -198,7 +198,6 @@ function indicesToSpans(indices, className) {
     return result;
 }
 function start(level) {
-    var _a, _b, _c;
     if (level === null) {
         let temp = Array.from(gameData.completedSet).pop();
         if (temp === undefined) {
@@ -265,7 +264,9 @@ function start(level) {
         navPrev.onclick = () => { startLastLevel(); };
         navPrev.classList.remove('inactive');
     }
-    (_c = (_b = (_a = curEntries === null || curEntries === void 0 ? void 0 : curEntries[0]) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.focus) === null || _c === void 0 ? void 0 : _c.call(_b);
+    if (curEntries[0] !== undefined) {
+        curEntries[0][0].focus();
+    }
     updateMenuLevels();
 }
 Object.defineProperty(window, 'start', {
