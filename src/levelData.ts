@@ -1,5 +1,5 @@
-import {Level, LevelData, LevelName} from './types.js'
-const levelData: LevelData = new Map<LevelName, Level>([
+import {Level, LevelName} from './types.js'
+const levelData = new Map<LevelName, Level>([
     ['intro',{name:'Intro',
     statictargets:['regex'],
     dynamictargets:[],

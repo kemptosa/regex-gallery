@@ -26,7 +26,6 @@ export interface Level {
     prev: LevelName[],
     mapdata: MapData
 }
-export type LevelData = Map<LevelName, Level>
 export interface GameData {
     version: string
     completed: LevelName[],
