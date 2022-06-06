@@ -91,37 +91,6 @@ let saveData = function () {
     gameData.completed = Array.from(gameData.completedSet);
     localStorage.setItem('gamedata', JSON.stringify(gameData));
 };
-// if (!gameData.introPlayed) {
-if (false) {
-    let introText = Array.from("welcome to regex gallery").reverse();
-    let currentText = '';
-    let introContainer = create('p');
-    introContainer.className = 'intro';
-    introContainer.innerText = '//';
-    game.append(introContainer);
-    let introLoop;
-    introLoop = setInterval(() => {
-        introContainer.innerText = `/${currentText}/`;
-        if (introText.length > 0) {
-            currentText += introText.pop();
-        }
-        else {
-            clearInterval(introLoop);
-            setTimeout(() => {
-                introContainer.style.color = "var(--texthidden);";
-                setTimeout(() => {
-                    introContainer.remove();
-                    start(null);
-                }, 500);
-            }, 1000);
-        }
-    }, 100);
-}
-else {
-    setTimeout(() => {
-        start(null);
-    }, 0);
-}
 let curLevelId = 'intro';
 let curLevel = getLevel(curLevelId);
 let curEntries = [];
@@ -599,4 +568,33 @@ document.addEventListener('keyup', handleKey);
 toggleLight.addEventListener('click', () => {
     document.body.classList.toggle('light');
 });
+// if (!gameData.introPlayed) {
+if (!isTest) {
+    let introText = Array.from("welcome to regex gallery").reverse();
+    let currentText = '';
+    let introContainer = create('p');
+    introContainer.className = 'intro';
+    introContainer.innerText = '//';
+    game.append(introContainer);
+    let introLoop;
+    introLoop = setInterval(() => {
+        introContainer.innerText = `/${currentText}/`;
+        if (introText.length > 0) {
+            currentText += introText.pop();
+        }
+        else {
+            clearInterval(introLoop);
+            setTimeout(() => {
+                introContainer.style.color = "var(--texthidden);";
+                setTimeout(() => {
+                    introContainer.remove();
+                    start(null);
+                }, 500);
+            }, 1000);
+        }
+    }, 100);
+}
+else {
+    start(null);
+}
 export { overlapSpan };
